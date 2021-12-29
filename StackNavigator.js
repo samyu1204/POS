@@ -9,6 +9,7 @@ import ForgotScreen from "./app/src/screens/ForgotScreen";
 import AddItemScreen from "./app/src/screens/AddItem";
 import WelcomeScreen from "./app/src/screens/WelcomeScreen";
 import AddMenuItemScreen from './app/src/screens/AddMenuItemScreen';
+import StartScreen from './app/src/screens/StartScreen';
 
 /**
  * Create the stack for page navigation:
@@ -30,6 +31,7 @@ function StackNavigator() {
         <Stack.Screen name="AddItem" component={AddItemScreen}/>
         <Stack.Screen name="Welcome" component={WelcomeScreen}/>
         <Stack.Screen name="AddMenuItem" component={AddMenuItemScreen} />
+        <Stack.Screen name="Start" component={StartScreen} />
       </Stack.Group>
     </Stack.Navigator>
   );
