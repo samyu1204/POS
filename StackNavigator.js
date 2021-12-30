@@ -32,6 +32,7 @@ function StackNavigator() {
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Start" component={StartScreen} />
         <Stack.Screen name="AddMenuItem" component={AddMenuItemScreen} />
+        <Stack.Screen name="Start" component={StartScreen} />
       </Stack.Group>
     </Stack.Navigator>
   );
