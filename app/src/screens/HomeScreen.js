@@ -23,6 +23,10 @@ function HomeScreen() {
           onPress={() => navigation.navigate("Register")}
         />
       </View>
+
+      <View style={styles.signupButton}>
+        <LButton text="Menu" onPress={() => navigation.navigate("Start")} />
+      </View>
     </ImageBackground>
   );
 }
