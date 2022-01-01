@@ -23,7 +23,7 @@ function RegisterScreen() {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     return reg.test(text);
   };
-
+  
   return (
     <ImageBackground style={styles.background}>
       <Logo />
@@ -40,7 +40,7 @@ function RegisterScreen() {
       <View style={styles.enterForm}>
         <Formik
           initialValues={{ email: "", password: "", confirm: "" }}
-          onSubmit={(values, actions) => {
+          onSubmit= {async(values, actions) => {
             // Valid email will allow user to proceed to
             // start screen.
             if (!validate(values.email)) {

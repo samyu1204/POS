@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from "@react-navigation/native";
+import { TextInput } from 'react-native-gesture-handler';
 
 function MenuScreen() {
-    const navigation = useNavigation();
+    const [name, setName] = useState();
+
     return(
         <View style={styles.background}>
             <View style={styles.addMenu}>
-                <TouchableOpacity onPress={() => navigation.navigate('AddItem')}>
-                    <Text style={styles.text}>Add Menu</Text>
-                </TouchableOpacity>
+                <Text>{name}</Text>
+                <TextInput onChangeText={(text) => setName(text)} placeholder='Enter' ></TextInput>
             </View>
         </View>
     );
@@ -26,9 +26,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white', 
         borderRadius: 30, 
         position: 'absolute', 
-        top: 40, 
-        width: 200, 
-        height: 30
+        top: 6,
     },
     text: {
         textAlign: 'center',
