@@ -19,7 +19,7 @@ function HomeScreen() {
       <View style={styles.signupButton}>
         <LButton
           text="SIGN UP"
-          onPress={() => navigation.navigate("Start")}
+          onPress={() => navigation.navigate("Register")}
         />
       </View>
     </ImageBackground>

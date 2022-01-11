@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ImageBackground,
   StyleSheet,
@@ -11,18 +11,40 @@ import {
   Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Formik } from "formik";
+import { authentication } from "./firebase-config.js";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 import { Logo } from "../utility/Logo.js";
 
 function RegisterScreen() {
   const navigation = useNavigation();
-  let email = null;
 
   const validate = (text) => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     return reg.test(text);
   };
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isRegistered, setIsRegistered] = useState(false);
+ 
+  const registerUser = () => {
+    createUserWithEmailAndPassword(authentication, email, password)
+    .then((re) => {
+      setIsRegistered(true);
+    })
+    .catch((re) => {
+      console.log(re);
+    })
+  }
+
+  const changeEmail = (value) => {
+    setEmail(value);
+  }
+
+  const changePassword = (value) => {
+    setPassword(value);
+  }
   
   return (
     <ImageBackground style={styles.background}>
@@ -38,81 +60,11 @@ function RegisterScreen() {
       </View>
 
       <View style={styles.enterForm}>
-        <Formik
-          initialValues={{ email: "", password: "", confirm: "" }}
-          onSubmit= {async(values, actions) => {
-            // Valid email will allow user to proceed to
-            // start screen.
-            if (!validate(values.email)) {
-              alert("Invalid email!");
-            } else if (values.password !== values.confirm) {
-              alert("Passwords do not match!");
-            } else {
-              navigation.navigate("Start");
-            }
-            actions.resetForm();
-          }}
-        >
-          {(props) => (
-            <View>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Email"
-                placeholderTextColor={"white"}
-                onChangeText={props.handleChange("email")}
-                value={props.values.email}
-              />
-
-              <TextInput
-                style={styles.textInput}
-                secureTextEntry={true}
-                placeholder="Password"
-                placeholderTextColor={"white"}
-                onChangeText={props.handleChange("password")}
-                value={props.values.password}
-              />
-
-              <TextInput
-                style={styles.textInput}
-                secureTextEntry={true}
-                placeholder="Confirm Password"
-                placeholderTextColor={"white"}
-                onChangeText={props.handleChange("confirm")}
-                value={props.values.confirm}
-              />
-              <Text>{"\n"}</Text>
-              <TouchableOpacity
-                style={styles.submitButton}
-                accessibilityLabel="Learn more about this purple button"
-                onPress={props.handleSubmit}
-              >
-                <Text style={styles.buttonText}>Submit</Text>
-              </TouchableOpacity>
-              <Text>{"\n"}</Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={styles.regText}>Already have an account? </Text>
-                <Text
-                  onPress={() => navigation.navigate("Login")}
-                  style={styles.noAccount}
-                >
-                  Log in!
-                </Text>
-              </View>
-              <Text
-                onPress={() => navigation.navigate("Forgot")}
-                style={styles.noAccount}
-              >
-                {"\n"}Forgot your password?
-              </Text>
-            </View>
-          )}
-        </Formik>
+        <TextInput onChangeText={changeEmail} value={email} placeholder="Email" />
+        <TextInput onChangeText={changePassword} value={password} placeholder="Password" secureTextEntry={true} />
+        <TouchableOpacity style={{backgroundColor: 'white'}} onPress={registerUser} >
+          <Text> Sign Up </Text>
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   );
