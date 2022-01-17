@@ -1,5 +1,4 @@
 import React from 'react';
-import { View, Text } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -10,7 +9,6 @@ import EditMenu from './EditMenu';
 import CustomDrawer from './CustomDrawer';
 
 const Drawer = createDrawerNavigator();
-    
 
 function StartScreen() {
     return (
@@ -28,7 +26,7 @@ function StartScreen() {
           <Drawer.Screen name="Menu" component={MenuScreen} options={{ 
             drawerIcon: ({ color }) => (
               <Ionicons name='logo-ionic' size={22} color={color} />
-            )
+            ) 
            }} />
   
           <Drawer.Screen name="OrderHistory" component={OrderHistory} options={{ 
@@ -36,7 +34,7 @@ function StartScreen() {
               <Ionicons name='receipt' size={22} color={color} />
             )
            }} />
-  
+
           <Drawer.Screen name="Analytics" component={Analytics} options={{ 
             drawerIcon: ({ color }) => (
               <Ionicons name='stats-chart-outline' size={22} color={color} />

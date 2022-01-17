@@ -4,8 +4,21 @@ import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawe
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import { signOut } from "firebase/auth";
+import { authentication } from './firebase-config';
+
 function CustomDrawer(props) {
     const navigation = useNavigation();
+
+    const signUserOut = () => {
+        signOut(authentication)
+        .then((re) => {
+            navigation.navigate('Home');
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
 
     return(
         <View style={{ flex: 1 }}>
@@ -15,7 +28,7 @@ function CustomDrawer(props) {
             </DrawerContentScrollView>
             
             <View style={{padding: 20, borderTopWidth: 1, borderTopColor: 'black'}}>
-                <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.signOut}>
+                <TouchableOpacity onPress={signUserOut} style={styles.signOut}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Ionicons name="log-out-outline" size={22} />
                         <Text style={styles.text}>Sign Out</Text>

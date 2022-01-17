@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ImageBackground,
   StyleSheet,
@@ -8,21 +8,44 @@ import {
   TouchableHighlight,
   Text,
   Button,
-  Image,
+  Image
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
 
 import { Logo } from "../utility/Logo.js";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { authentication } from './firebase-config';
 
 function RegisterScreen() {
   const navigation = useNavigation();
-  let email = null;
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [signedIn, setSignedIn] = useState(false);
+
+  const signUserIn = () => {
+    signInWithEmailAndPassword(authentication, email, password)
+    .then((re) => {
+      setSignedIn(true);
+      navigation.navigate("Start");
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }
 
   const validate = (text) => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     return reg.test(text);
   };
+
+  const changeEmail = (value) => {
+    setEmail(value);
+  }
+
+  const changePassword = (value) => {
+    setPassword(value);
+  }
 
   return (
     <ImageBackground style={styles.background}>
@@ -52,22 +75,19 @@ function RegisterScreen() {
         </TouchableOpacity>
       </View>
 
-
-
       <View style={styles.enterForm}>
         <Formik
-          initialValues={{ email: "", password: "", confirm: "" }}
+          initialValues={{ email: "", password: "" }}
           onSubmit={(values, actions) => {
             // Valid email will allow user to proceed to
             // start screen.
-            if (!validate(values.email)) {
+            if (!validate(email)) {
               alert("Invalid email!");
-            } else if (values.password !== values.confirm) {
-              alert("Passwords do not match!");
-            } else {
+            } else if (password.length === 0) {
+              alert("Enter password!")
+            }else {
               navigation.navigate("Start");
             }
-
             actions.resetForm();
           }}
         >
@@ -77,8 +97,8 @@ function RegisterScreen() {
                 style={styles.textInput}
                 placeholder="Email"
                 placeholderTextColor={"white"}
-                onChangeText={props.handleChange("email")}
-                value={props.values.email}
+                onChangeText={changeEmail}
+                value={email}
               />
 
               <TextInput
@@ -86,17 +106,9 @@ function RegisterScreen() {
                 secureTextEntry={true}
                 placeholder="Password"
                 placeholderTextColor={"white"}
-                onChangeText={props.handleChange("password")}
-                value={props.values.password}
+                onChangeText={changePassword}
+                value={password}
               />
-              <Text>{"\n"}</Text>
-              <TouchableOpacity
-                style={styles.submitButton}
-                accessibilityLabel="Learn more about this purple button"
-                onPress={props.handleSubmit}
-              >
-                <Text style={styles.buttonText}>Submit</Text>
-              </TouchableOpacity>
               <Text>{"\n"}</Text>
               <View
                 style={{
@@ -124,6 +136,13 @@ function RegisterScreen() {
           )}
         </Formik>
       </View>
+
+      <TouchableOpacity
+        style={styles.submitButton}
+        accessibilityLabel="Learn more about this purple button"
+        >
+        <Text style={styles.buttonText} onPress={signUserIn }>Submit</Text>
+      </TouchableOpacity>
     </ImageBackground>
   );
 }
@@ -150,10 +169,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#0040ff",
     textAlign: "center",
+    top: 80
   },
   regText: {
     fontSize: 20,
     color: "black",
+    top: 80,
   },
   backButton: {
     borderRadius: 30,
@@ -192,6 +213,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 150,
     backgroundColor: "#f01d71",
+    top: -220,
   },
   submitButtonText: {
     color: "white",

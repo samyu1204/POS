@@ -16,11 +16,10 @@ function HomeScreen() {
       <View style={styles.loginButton}>
         <LButton text="LOG IN" onPress={() => navigation.navigate("Login")} />
       </View>
-
       <View style={styles.signupButton}>
         <LButton
           text="SIGN UP"
-          onPress={() => navigation.navigate("Start")}
+          onPress={() => navigation.navigate("Register")}
         />
       </View>
 
