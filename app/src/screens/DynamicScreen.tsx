@@ -38,26 +38,34 @@ function DynamicScreen() {
   for (let i = 0; i < numInputs; i++) {
     inputs.push(
       <View key={i} style={styles.row}>
-        <Text>{i + 1}.</Text>
+        <Text style={{ fontSize: 25, padding: 15 }}>{i + 1}.</Text>
         <TextInput
+          style={styles.input}
           onChangeText={(value) => setInputValue(i, value)}
           value={refInputs.current[i]}
-          placeholder="placeholder"
+          placeholder="Type"
         />
-        <Pressable onPress={() => removeInput(i)}>
-          <AntDesign name="minuscircleo" size={20} color="red" />
+        <TextInput
+          style={styles.input}
+          onChangeText={(value) => setInputValue(i, value)}
+          value={refInputs.current[i]}
+          placeholder="Price"
+        />
+        <Pressable onPress={() => removeInput(i)} style={styles.button}>
+          <AntDesign name="minuscircleo" size={35} color="red" />
         </Pressable>
       </View>
     );
   }
+  console.log(refInputs);
   return (
     <ScrollView style={styles.container}>
       {inputs}
-      <Pressable onPress={addInput}>
-        <Text>+ Add a new input</Text>
+      <Pressable onPress={addInput} style={styles.addButton}>
+        <Text>+ Add another option</Text>
       </Pressable>
-      <View>
-        <Text>You have answered:</Text>
+      <View style={{ marginTop: 25 }}>
+        <Text>Entered options: </Text>
         {refInputs.current.map((value, i) => {
           return <Text key={i}>{`${i + 1} - ${value}`}</Text>;
         })}
@@ -73,6 +81,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+  },
+  input: {
+    textAlign: "left",
+    fontSize: 20,
+    borderRadius: 10,
+    paddingVertical: 14,
+    paddingRight: 150,
+    paddingLeft: 25,
+    backgroundColor: "white",
+    margin: 8,
+    color: "black",
+  },
+  addButton: {
+    textAlign: "left",
+    fontSize: 20,
+    width: "13.5%",
+    borderRadius: 5,
+    paddingVertical: 14,
+    paddingLeft: 20,
+    paddingRight: 0,
+    backgroundColor: "white",
+    margin: 8,
+    color: "black",
+  },
+  button: {
+    position: "absolute",
+    paddingTop: 17,
+    right: 400,
   },
 });
 export default DynamicScreen;
