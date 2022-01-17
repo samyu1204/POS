@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "259372529543",
+    "project_id": "possum-4dbc6",
+    "storage_bucket": "possum-4dbc6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259372529543:android:9118e40e79afdbba2dc522",
+        "android_client_info": {
+          "package_name": "com.project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "259372529543-arfl2gmk229ktgpfsaughtnd82hh0u3r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4rMlFfmRkq33XlPj2kYTLi1nrx6ECU4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "259372529543-arfl2gmk229ktgpfsaughtnd82hh0u3r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "259372529543-b573oen2aumshc6r2tu4sdk3irnr5b8t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.name.project"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

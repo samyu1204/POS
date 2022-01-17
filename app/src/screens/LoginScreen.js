@@ -8,31 +8,31 @@ import {
   TouchableHighlight,
   Text,
   Button,
-  Image
+  Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
 
 import { Logo } from "../utility/Logo.js";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { authentication } from './firebase-config';
+import { authentication } from "./firebase-config";
 
 function RegisterScreen() {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [signedIn, setSignedIn] = useState(false);
 
   const signUserIn = () => {
     signInWithEmailAndPassword(authentication, email, password)
-    .then((re) => {
-      setSignedIn(true);
-      navigation.navigate("Start");
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-  }
+      .then((re) => {
+        setSignedIn(true);
+        navigation.navigate("Start");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const validate = (text) => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
@@ -41,11 +41,11 @@ function RegisterScreen() {
 
   const changeEmail = (value) => {
     setEmail(value);
-  }
+  };
 
   const changePassword = (value) => {
     setPassword(value);
-  }
+  };
 
   return (
     <ImageBackground style={styles.background}>
@@ -75,6 +75,14 @@ function RegisterScreen() {
         </TouchableOpacity>
       </View>
 
+      <View style={styles.dynamicButton}>
+        <TouchableOpacity onPress={() => navigation.navigate("DynamicScreen")}>
+          <View>
+            <Text style={styles.buttonText}> Dynamic screen </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.enterForm}>
         <Formik
           initialValues={{ email: "", password: "" }}
@@ -84,8 +92,8 @@ function RegisterScreen() {
             if (!validate(email)) {
               alert("Invalid email!");
             } else if (password.length === 0) {
-              alert("Enter password!")
-            }else {
+              alert("Enter password!");
+            } else {
               navigation.navigate("Start");
             }
             actions.resetForm();
@@ -140,8 +148,10 @@ function RegisterScreen() {
       <TouchableOpacity
         style={styles.submitButton}
         accessibilityLabel="Learn more about this purple button"
-        >
-        <Text style={styles.buttonText} onPress={signUserIn }>Submit</Text>
+      >
+        <Text style={styles.buttonText} onPress={signUserIn}>
+          Submit
+        </Text>
       </TouchableOpacity>
     </ImageBackground>
   );
@@ -169,7 +179,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#0040ff",
     textAlign: "center",
-    top: 80
+    top: 80,
   },
   regText: {
     fontSize: 20,
@@ -201,6 +211,15 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
     left: 5,
     top: 110,
+    position: "absolute",
+  },
+  dynamicButton: {
+    borderRadius: 30,
+    paddingVertical: 3,
+    paddingHorizontal: 5,
+    backgroundColor: "red",
+    left: 5,
+    top: 150,
     position: "absolute",
   },
   buttonText: {
