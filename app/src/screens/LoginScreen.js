@@ -64,6 +64,14 @@ function RegisterScreen() {
         </TouchableOpacity>
       </View>
 
+      <View style={styles.orderButton}>
+        <TouchableOpacity onPress={() => navigation.navigate("Order")}>
+          <View>
+            <Text style={styles.buttonText}> Order Item Screen </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.enterForm}>
         <Formik
           initialValues={{ email: "", password: "" }}
@@ -191,6 +199,15 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
     left: 5,
     top: 110,
+    position: "absolute",
+  },
+  orderButton: {
+    borderRadius: 30,
+    paddingVertical: 3,
+    paddingHorizontal: 5,
+    backgroundColor: "red",
+    left: 5,
+    top: 150,
     position: "absolute",
   },
   buttonText: {
