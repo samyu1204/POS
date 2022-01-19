@@ -5,7 +5,8 @@ import { useNavigation } from "@react-navigation/native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { signOut } from "firebase/auth";
-import { authentication } from './firebase-config';
+import { authentication } from '../database/firebase-config';
+import global from "../global_information/global";
 
 function CustomDrawer(props) {
     const navigation = useNavigation();
@@ -13,6 +14,7 @@ function CustomDrawer(props) {
     const signUserOut = () => {
         signOut(authentication)
         .then((re) => {
+            global.session_user = null;
             navigation.navigate('Home');
         })
         .catch((err) => {

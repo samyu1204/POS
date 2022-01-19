@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   ImageBackground,
   StyleSheet,
@@ -7,14 +6,14 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Text,
-  Button,
   Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { authentication } from "./firebase-config.js";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-
 import { Logo } from "../utility/Logo.js";
+import { Formik } from "formik";
+import { authentication } from "../database/firebase-config.js";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { addUser } from "../database/firebase-utility.js";
 
 function RegisterScreen() {
   const navigation = useNavigation();
@@ -24,28 +23,19 @@ function RegisterScreen() {
     return reg.test(text);
   };
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isRegistered, setIsRegistered] = useState(false);
- 
-  const registerUser = () => {
+  const registerUser = (email, password) => {
     createUserWithEmailAndPassword(authentication, email, password)
     .then((re) => {
-      setIsRegistered(true);
+      global.session_user = email;
+      addUser(email);
+      navigation.navigate('Start');
     })
     .catch((re) => {
       console.log(re);
+      alert('Cannot register!')
     })
-  }
+}
 
-  const changeEmail = (value) => {
-    setEmail(value);
-  }
-
-  const changePassword = (value) => {
-    setPassword(value);
-  }
-  
   return (
     <ImageBackground style={styles.background}>
       <Logo />
@@ -60,13 +50,84 @@ function RegisterScreen() {
       </View>
 
       <View style={styles.enterForm}>
-        <TextInput onChangeText={changeEmail} value={email} placeholder="Email" />
-        <TextInput onChangeText={changePassword} value={password} placeholder="Password" secureTextEntry={true} />
-        <TouchableOpacity style={{backgroundColor: 'white'}} onPress={registerUser} >
-          <Text> Sign Up </Text>
-        </TouchableOpacity>
+        <Formik
+          initialValues={{ email: "", password: "", confirm: "" }}
+          onSubmit={(values, actions) => {
+            // Valid email will allow user to proceed to
+            // start screen.
+            if (!validate(values.email)) {
+              alert("Invalid email!");
+            } else if (values.password !== values.confirm) {
+              alert("Passwords do not match!");
+            } else {
+              registerUser(values.email, values.password);
+            }
+            actions.resetForm();
+          }}>
+
+          {(props) => (
+            <View>
+              <TextInput
+                style={styles.textInput}
+                placeholder="Email"
+                placeholderTextColor={"white"}
+                onChangeText={props.handleChange("email")}
+                value={props.values.email}
+              />
+
+              <TextInput
+                style={styles.textInput}
+                secureTextEntry={true}
+                placeholder="Password"
+                placeholderTextColor={"white"}
+                onChangeText={props.handleChange("password")}
+                value={props.values.password}
+              />
+
+              <TextInput
+                style={styles.textInput}
+                secureTextEntry={true}
+                placeholder="Confirm Password"
+                placeholderTextColor={"white"}
+                onChangeText={props.handleChange("confirm")}
+                value={props.values.confirm}
+              />
+              <Text>{"\n"}</Text>
+              <TouchableOpacity
+                style={styles.submitButton}
+                accessibilityLabel="Learn more about this purple button"
+                onPress={props.handleSubmit}
+              >
+                <Text style={styles.buttonText}>Submit</Text>
+              </TouchableOpacity>
+              <Text>{"\n"}</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={styles.regText}>Already have an account? </Text>
+                <Text
+                  onPress={() => navigation.navigate("Login")}
+                  style={styles.noAccount}
+                >
+                  Log in!
+                </Text>
+              </View>
+              <Text
+                onPress={() => navigation.navigate("Forgot")}
+                style={styles.noAccount}
+              >
+                {"\n"}Forgot your password?
+              </Text>
+            </View>
+          )}
+        </Formik>
       </View>
     </ImageBackground>
+
   );
 }
 
