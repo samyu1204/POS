@@ -1,20 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
-import { authentication } from './firebase-config';
-import { collection, getDocs } from 'firebase/firestore/lite';
-import { db } from './firebase-config';
+import { getUserData, addData } from '../database/firebase-utility';
+import { addUser } from '../database/firebase-utility';
+import { getMenuData } from '../database/firebase-utility';
 
 function Analytics() {
-    const getData = async () => {
-        const citiesCol = collection(db, 'cities');
-        const citySnapshot = await getDocs(citiesCol);
-        const cityList = citySnapshot.docs.map(doc => doc.data());
-        console.log(cityList);
-    }   
+
+    const getSomething = () => {
+        alert(global.session_user);
+    }
 
     return(
         <View style={styles.background}>
-            <Button title='Get Data' onPress={getData} />
+            <Text> {global.session_user} </Text>
+            <Button title='Add Data' onPress={getMenuData} />
+            <Button title='Get User DATA' onPress={() => getUserData(global.session_user)} />
         </View>
     );
 }

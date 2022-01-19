@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   ImageBackground,
   StyleSheet,
@@ -7,45 +6,35 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Text,
-  Button,
   Image
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
 
 import { Logo } from "../utility/Logo.js";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { authentication } from './firebase-config';
+import { authentication } from "../database/firebase-config.js";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import global from "../global_information/global.js";
 
 function RegisterScreen() {
   const navigation = useNavigation();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [signedIn, setSignedIn] = useState(false);
-
-  const signUserIn = () => {
-    signInWithEmailAndPassword(authentication, email, password)
-    .then((re) => {
-      setSignedIn(true);
-      navigation.navigate("Start");
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-  }
 
   const validate = (text) => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     return reg.test(text);
   };
 
-  const changeEmail = (value) => {
-    setEmail(value);
-  }
-
-  const changePassword = (value) => {
-    setPassword(value);
-  }
+  const signUserIn = (email, password) => {
+    signInWithEmailAndPassword(authentication, email, password)
+    .then((re) => {
+      global.session_user = email;
+      navigation.navigate('Start');
+    })
+    .catch((err) => {
+      console.log(err);
+      alert('Account not found!')
+    })
+}
 
   return (
     <ImageBackground style={styles.background}>
@@ -81,12 +70,12 @@ function RegisterScreen() {
           onSubmit={(values, actions) => {
             // Valid email will allow user to proceed to
             // start screen.
-            if (!validate(email)) {
+            if (!validate(values.email)) {
               alert("Invalid email!");
-            } else if (password.length === 0) {
+            } else if (values.password.length === 0) {
               alert("Enter password!")
             }else {
-              navigation.navigate("Start");
+              signUserIn(values.email, values.password);
             }
             actions.resetForm();
           }}
@@ -97,8 +86,8 @@ function RegisterScreen() {
                 style={styles.textInput}
                 placeholder="Email"
                 placeholderTextColor={"white"}
-                onChangeText={changeEmail}
-                value={email}
+                onChangeText={props.handleChange("email")}
+                value={props.values.email}
               />
 
               <TextInput
@@ -106,10 +95,18 @@ function RegisterScreen() {
                 secureTextEntry={true}
                 placeholder="Password"
                 placeholderTextColor={"white"}
-                onChangeText={changePassword}
-                value={password}
+                onChangeText={props.handleChange("password")}
+                value={props.values.password}
               />
               <Text>{"\n"}</Text>
+
+              <TouchableOpacity
+                style={styles.submitButton}
+                accessibilityLabel="Learn more about this purple button"
+                >
+                <Text style={styles.buttonText} onPress={props.handleSubmit}>Submit</Text>
+              </TouchableOpacity>
+
               <View
                 style={{
                   flexDirection: "row",
@@ -136,13 +133,6 @@ function RegisterScreen() {
           )}
         </Formik>
       </View>
-
-      <TouchableOpacity
-        style={styles.submitButton}
-        accessibilityLabel="Learn more about this purple button"
-        >
-        <Text style={styles.buttonText} onPress={signUserIn }>Submit</Text>
-      </TouchableOpacity>
     </ImageBackground>
   );
 }
@@ -213,7 +203,6 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 150,
     backgroundColor: "#f01d71",
-    top: -220,
   },
   submitButtonText: {
     color: "white",
