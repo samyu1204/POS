@@ -13,7 +13,7 @@ function Analytics() {
     return(
         <View style={styles.background}>
             <Text> {global.session_user} </Text>
-            <Button title='Add Data' onPress={getMenuData} />
+            <Button title='Get menu' onPress={getMenuData} />
             <Button title='Get User DATA' onPress={() => getUserData(global.session_user)} />
         </View>
     );
