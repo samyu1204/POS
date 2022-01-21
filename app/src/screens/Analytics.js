@@ -4,6 +4,12 @@ import { getUserData, addData } from '../database/firebase-utility';
 import { addUser } from '../database/firebase-utility';
 import { getMenuData } from '../database/firebase-utility';
 
+
+/*
+    TODO - display analytics in the form of a graph covering the user's past week of sales,
+    TODO -      inventory and other necessities.
+*/
+
 function Analytics() {
 
     const getSomething = () => {
