@@ -11,6 +11,8 @@ import WelcomeScreen from "./app/src/screens/WelcomeScreen";
 import AddMenuItemScreen from './app/src/screens/AddMenuItemScreen';
 import StartScreen from './app/src/screens/StartScreen';
 import OrderScreen from './app/src/screens/OrderScreen';
+import EditMenu from './app/src/screens/EditMenu';
+import CustomiseMenuPage from './app/src/screens/CustomiseMenuPage';
 
 /**
  * Create the stack for page navigation:
@@ -34,6 +36,8 @@ function StackNavigator() {
         <Stack.Screen name="AddMenuItem" component={AddMenuItemScreen} />
         <Stack.Screen name="Start" component={StartScreen} />
         <Stack.Screen name="Order" component={OrderScreen} />
+        <Stack.Screen name="EditMenu" component={EditMenu} />
+        <Stack.Screen name="CustomiseMenu" component={CustomiseMenuPage} />
       </Stack.Group>
     </Stack.Navigator>
   );

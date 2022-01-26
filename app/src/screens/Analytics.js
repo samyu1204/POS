@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import { getUserData, addData } from '../database/firebase-utility';
-import { addUser } from '../database/firebase-utility';
-import { getMenuData } from '../database/firebase-utility';
+import React from "react";
+import { View, Text, StyleSheet, Button } from "react-native";
+import { getUserData, addData } from "../database/firebase-utility";
+import { addUser } from "../database/firebase-utility";
+import { getMenuData } from "../database/firebase-utility";
+import global from "../global_information/global";
 
 
 /*
@@ -11,27 +12,30 @@ import { getMenuData } from '../database/firebase-utility';
 */
 
 function Analytics() {
+  const getSomething = () => {
+    alert(global.session_user);
+  };
 
-    const getSomething = () => {
-        alert(global.session_user);
-    }
-
-    return(
-        <View style={styles.background}>
-            <Text> {global.session_user} </Text>
-            <Button title='Add Data' onPress={getMenuData} />
-            <Button title='Get User DATA' onPress={() => getUserData(global.session_user)} />
-        </View>
-    );
+  return (
+    <View style={styles.background}>
+      <Text> {global.session_user} </Text>
+      <Button title="Add Data" onPress={getMenuData} />
+      <Button
+        title="Get User DATA"
+        onPress={() => getUserData(global.session_user)}
+      />
+      <Button title="email" onPress={getSomething} />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    background: {
-      flex: 1,
-      justifyContent: "flex-end",
-      alignItems: "center",
-      backgroundColor: "#D1E3DA",
-    },
-})
+  background: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    backgroundColor: "#D1E3DA",
+  },
+});
 
 export default Analytics;
