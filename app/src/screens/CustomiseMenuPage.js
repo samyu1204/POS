@@ -5,20 +5,9 @@ import { addUser } from "../database/firebase-utility";
 import { getMenuData } from "../database/firebase-utility";
 import global from "../global_information/global";
 
-function Analytics() {
-  const getSomething = () => {
-    alert(global.session_user);
-  };
-
+function CustomiseMenuPage() {
   return (
     <View style={styles.background}>
-      <Text> {global.session_user} </Text>
-      <Button title="Add Data" onPress={getMenuData} />
-      <Button
-        title="Get User DATA"
-        onPress={() => getUserData(global.session_user)}
-      />
-      <Button title="email" onPress={getSomething} />
     </View>
   );
 }
@@ -26,10 +15,8 @@ function Analytics() {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
     backgroundColor: "#D1E3DA",
   },
 });
 
-export default Analytics;
+export default CustomiseMenuPage;
