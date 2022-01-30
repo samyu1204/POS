@@ -27,7 +27,22 @@ export const addUser = async (email) => {
 
 
 // ======================================================================================
-// Functions relation to menu:
+// Functions relation to getting menu:
+export const getMenuList = async () => {
+    const menuRef = doc(db, global.session_user, 'user_info');
+    const docSnap = await getDoc(menuRef);
+    return docSnap.data()['menu_list'];
+}
+
+
+export const getMenuData = async() => {
+    const menuSnapshot = await getDocs(collection(db, global.session_user, 'menus', 'lunch'));
+    const menuList = menuSnapshot.docs.map(doc => doc.data());
+    console.log(menuList);
+}
+
+// ======================================================================================
+// Functions relation to add to menu:
 
 export const addMenuNameToList = async (menuName) => {
     await updateDoc(doc(db, global.session_user, 'user_info'), {
@@ -44,19 +59,41 @@ export const addMenu = async (menuName) => {
     });
 }
 
+/**
+ * Function requires:
+ *  - Item Name -> passed in as string
+ *  - Base Price -> passed in as number 
+ *  - Addons -> object
+ */
+export const addMenuItem = async(itemName, basePrice, adjustment) => {
+    // Create the menu item object
+    let itemObj = {};
+    itemObj[itemName] = {
+        basePrice: basePrice,
+        adjustment: adjustment
+    }
 
-export const getMenuList = async () => {
-    const menuRef = doc(db, global.session_user, 'user_info');
-    const docSnap = await getDoc(menuRef);
-    return docSnap.data()['menu_list'];
-}
-
-
-export const getMenuData = async() => {
-    const menuSnapshot = await getDocs(collection(db, global.session_user, 'menus', 'lunch'));
-    const menuList = menuSnapshot.docs.map(doc => doc.data());
-    console.log(menuList);
+    // Update so it wont remove existing data:
+    await updateDoc(doc(db, global.session_user, 'menus', 'lunch', 'rice'), itemObj);
 }
 
 
 // ======================================================================================
+// Retrieve a menu men as a map:
+export const getMenuAsMap = async(menuName) => {
+    const menuRef = await getDocs(collection(db, global.session_user, 'menus', menuName));
+    const menu = menuRef.docs.map(doc => doc.data());
+    const menu_id = menuRef.docs.map(doc => doc.id);
+
+    // console.log(menu)
+    // console.log(menu_id)
+    const menuMap = new Map();
+
+    for (let i = 0; i < menu.length; i++) {
+        menuMap.set(menu_id[i], menu[i])
+    }
+    console.log(menuMap)
+    return menuMap;
+}
+
+

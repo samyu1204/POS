@@ -8,7 +8,9 @@ export const Logo = () => {
         style={styles.logo}
         source={require("../../assets/register_page/posSUM.png")}
       />
-      <Text style={styles.logoText}>POSsum</Text>
+      <View>
+        <Text style={styles.logoText}>pos<Text style={{ color: '#7CCEE7' }}>sibilities</Text> </Text>
+      </View>
     </View>
   );
 };
@@ -19,9 +21,9 @@ const styles = StyleSheet.create({
     height: 200,
   },
   logoContainer: {
-    position: "absolute",
     top: 70,
     alignItems: "center",
+    justifyContent: 'center'
   },
   logoText: {
     fontSize: 50,

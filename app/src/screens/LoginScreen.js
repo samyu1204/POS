@@ -6,16 +6,20 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Text,
-  Image
+  Image,
+  KeyboardAvoidingView 
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
-
 import { Logo } from "../utility/Logo.js";
 import { authentication } from "../database/firebase-config.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import global from "../global_information/global.js";
 import { getMenuList } from "../database/firebase-utility.js";
+import { ScrollView } from "react-native-gesture-handler";
+
+
+
 
 function RegisterScreen() {
   const navigation = useNavigation();
@@ -39,120 +43,128 @@ function RegisterScreen() {
 }
 
   return (
-    <ImageBackground style={styles.background}>
-      <Logo />
-      <View style={{ position: "absolute", top: 30, left: 20 }}>
-        <TouchableHighlight onPress={() => navigation.navigate("Home")}>
-          <Image
-            style={{ width: 50, height: 50 }}
-            source={require("../../assets/icons/back_button.png")}
-          />
-        </TouchableHighlight>
-      </View>
+      <View style={styles.background}>
+        <Logo />
+        <View style={{ position: "absolute", top: 30, left: 20 }}>
+          <TouchableHighlight onPress={() => navigation.navigate("Home")}>
+            <Image
+              style={{ width: 50, height: 50 }}
+              source={require("../../assets/icons/back_button.png")}
+            />
+          </TouchableHighlight>
+        </View>
 
-      <View style={styles.menuButton}>
-        <TouchableOpacity onPress={() => navigation.navigate("AddItem")}>
-          <View>
-            <Text style={styles.buttonText}> Add Item Screen </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.welcomeButton}>
-        <TouchableOpacity onPress={() => navigation.navigate("Welcome")}>
-          <View>
-            <Text style={styles.buttonText}> Welcome Screen </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.orderButton}>
-        <TouchableOpacity onPress={() => navigation.navigate("Order")}>
-          <View>
-            <Text style={styles.buttonText}> Order Item Screen </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.enterForm}>
-        <Formik
-          initialValues={{ email: "", password: "" }}
-          onSubmit={(values, actions) => {
-            // Valid email will allow user to proceed to
-            // start screen.
-            if (!validate(values.email)) {
-              alert("Invalid email!");
-            } else if (values.password.length === 0) {
-              alert("Enter password!")
-            }else {
-              signUserIn(values.email, values.password);
-            }
-            actions.resetForm();
-          }}
-        >
-          {(props) => (
+        <View style={styles.menuButton}>
+          <TouchableOpacity onPress={() => navigation.navigate("AddItem")}>
             <View>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Email"
-                placeholderTextColor={"white"}
-                onChangeText={props.handleChange("email")}
-                value={props.values.email}
-              />
+              <Text style={styles.buttonText}> Add Item Screen </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
 
-              <TextInput
-                style={styles.textInput}
-                secureTextEntry={true}
-                placeholder="Password"
-                placeholderTextColor={"white"}
-                onChangeText={props.handleChange("password")}
-                value={props.values.password}
-              />
-              <Text>{"\n"}</Text>
+        <View style={styles.welcomeButton}>
+          <TouchableOpacity onPress={() => navigation.navigate("Welcome")}>
+            <View>
+              <Text style={styles.buttonText}> Welcome Screen </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
 
-              <TouchableOpacity
-                style={styles.submitButton}
-                accessibilityLabel="Learn more about this purple button"
-                onPress={props.handleSubmit}
-                >
-                <Text style={styles.buttonText}>Submit</Text>
-              </TouchableOpacity>
+        <View style={styles.orderButton}>
+          <TouchableOpacity onPress={() => navigation.navigate("Order")}>
+            <View>
+              <Text style={styles.buttonText}> Order Item Screen </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+        <View style={styles.enterForm}>
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            onSubmit={(values, actions) => {
+              // Valid email will allow user to proceed to
+              // start screen.
+              if (!validate(values.email)) {
+                alert("Invalid email!");
+              } else if (values.password.length === 0) {
+                alert("Enter password!")
+              }else {
+                signUserIn(values.email, values.password);
+              }
+              actions.resetForm();
+            }}
+          >
+            {(props) => (
+              <View>
+
+              <KeyboardAvoidingView
+                      style={{flex: 1}}
+                      behavior='position'
+                      enabled
               >
-                <Text style={styles.regText}>Don't have an account? </Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Email"
+                  placeholderTextColor={"white"}
+                  onChangeText={props.handleChange("email")}
+                  value={props.values.email}
+                  />
+
+                <TextInput
+                  style={styles.textInput}
+                  secureTextEntry={true}
+                  placeholder="Password"
+                  placeholderTextColor={"white"}
+                  onChangeText={props.handleChange("password")}
+                  value={props.values.password}
+                  />
+                  
+              </KeyboardAvoidingView>
+
+                <Text>{"\n"}</Text>
+
+                <TouchableOpacity
+                  style={styles.submitButton}
+                  accessibilityLabel="Learn more about this purple button"
+                  onPress={props.handleSubmit}
+                  >
+                  <Text style={styles.buttonText}>Submit</Text>
+                </TouchableOpacity>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text style={styles.regText}>Don't have an account? </Text>
+                  <Text
+                    onPress={() => navigation.navigate("Register")}
+                    style={styles.noAccount}
+                  >
+                    Create one!
+                  </Text>
+                </View>
+
                 <Text
-                  onPress={() => navigation.navigate("Register")}
+                  onPress={() => navigation.navigate("Forgot")}
                   style={styles.noAccount}
                 >
-                  Create one!
+                  {"\n"}Forgot your password?
                 </Text>
               </View>
-
-              <Text
-                onPress={() => navigation.navigate("Forgot")}
-                style={styles.noAccount}
-              >
-                {"\n"}Forgot your password?
-              </Text>
-            </View>
-          )}
-        </Formik>
+            )}
+          </Formik>
+        </View>
       </View>
-    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
+    alignContent: 'center',
     backgroundColor: "#D1E3DA",
   },
   textSize: {
@@ -163,8 +175,8 @@ const styles = StyleSheet.create({
     fontSize: 400,
     borderRadius: 6,
     alignItems: "center",
-    top: 400,
-    position: "absolute",
+    justifyContent: 'center',
+    marginTop: '10%'
   },
   noAccount: {
     fontSize: 20,
@@ -221,8 +233,12 @@ const styles = StyleSheet.create({
   submitButton: {
     borderRadius: 30,
     paddingVertical: 14,
-    paddingHorizontal: 150,
+    paddingHorizontal: 125,
     backgroundColor: "#f01d71",
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    top: '25%'
   },
   submitButtonText: {
     color: "white",

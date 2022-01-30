@@ -16,6 +16,7 @@ function HomeScreen() {
       <View style={styles.loginButton}>
         <LButton text="LOG IN" onPress={() => navigation.navigate("Login")} />
       </View>
+
       <View style={styles.signupButton}>
         <LButton
           text="SIGN UP"
@@ -29,23 +30,18 @@ function HomeScreen() {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
+    alignContent: 'center',
     backgroundColor: "#D1E3DA",
   },
   loginButton: {
     borderRadius: 50,
-    paddingVertical: 10,
-    paddingHorizontal: 50,
-    backgroundColor: "#f01d71",
-    top: -350,
+    alignItems: 'center',
+    top: '13%'
   },
   signupButton: {
     borderRadius: 50,
-    paddingVertical: 10,
-    paddingHorizontal: 50,
-    backgroundColor: "#f01d71",
-    top: -330,
+    alignItems: 'center',
+    top: '17%'
   },
 });
 

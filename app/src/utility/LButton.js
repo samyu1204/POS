@@ -3,10 +3,8 @@ import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
 export const LButton = (props) => {
     return(
-        <TouchableOpacity onPress={props.onPress}>
-            <View style={styles.loginButton}>
-                <Text style={styles.buttonText}> {props.text} </Text>
-            </View>
+        <TouchableOpacity onPress={props.onPress} style={styles.loginButton}>
+            <Text style={styles.buttonText}> {props.text} </Text>
         </TouchableOpacity>
     );
 }
@@ -14,8 +12,8 @@ export const LButton = (props) => {
 const styles = StyleSheet.create({
     loginButton: {
       borderRadius: 30,
-      paddingVertical: 14,
-      paddingHorizontal: 150,
+      paddingVertical: 20,
+      width: 400,
       backgroundColor: '#f01d71',
     },
     buttonText: {
