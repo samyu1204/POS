@@ -1,7 +1,7 @@
 import { collection, getDocs, doc, setDoc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore/lite';
 import { db } from '../database/firebase-config';
 import global from '../global_information/global';
-
+import global_menu from '../global_information/global_menu';
 // Data getter function:
 export const getUserData = async () => {
     const citySnapshot = await getDocs(collection(db, global.session_user));
@@ -28,10 +28,10 @@ export const addUser = async (email) => {
 
 // ======================================================================================
 // Functions relation to getting menu:
-export const getMenuList = async () => {
+export const setGlobalMenuList = async () => {
     const menuRef = doc(db, global.session_user, 'user_info');
     const docSnap = await getDoc(menuRef);
-    return docSnap.data()['menu_list'];
+    global.menu_list = docSnap.data()['menu_list'];
 }
 
 
@@ -79,21 +79,28 @@ export const addMenuItem = async(itemName, basePrice, adjustment) => {
 
 
 // ======================================================================================
-// Retrieve a menu men as a map:
-export const getMenuAsMap = async(menuName) => {
-    const menuRef = await getDocs(collection(db, global.session_user, 'menus', menuName));
-    const menu = menuRef.docs.map(doc => doc.data());
-    const menu_id = menuRef.docs.map(doc => doc.id);
-
-    // console.log(menu)
-    // console.log(menu_id)
-    const menuMap = new Map();
-
-    for (let i = 0; i < menu.length; i++) {
-        menuMap.set(menu_id[i], menu[i])
+// Menu Mapping
+export const mapGlobalMenu = async() => {
+    if (global_menu.menuMap === null) {
+        global_menu.menuMap = new Map();
     }
-    console.log(menuMap)
-    return menuMap;
+
+    for (let i = 0; i < global.menu_list.length; i++) {
+        const menuRef = await getDocs(collection(db, global.session_user, 'menus', global.menu_list[i]));
+        const menu = menuRef.docs.map(doc => doc.data());
+        const menu_id = menuRef.docs.map(doc => doc.id);
+
+        // console.log(menu)
+        // console.log(menu_id)
+        const menuMap = new Map();
+
+        for (let i = 0; i < menu.length; i++) {
+            menuMap.set(menu_id[i], menu[i])
+        }
+
+        // Map the menu name to the menu map:
+        global_menu.menuMap.set(global.menu_list[i], menuMap)
+    }
 }
 
 

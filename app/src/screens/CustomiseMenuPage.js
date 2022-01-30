@@ -7,6 +7,8 @@ import global from "../global_information/global";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { addMenuItem } from "../database/firebase-utility";
+import MenuCategoryDisplay from "../edit_menu_utility/MenuCategoryDisplay";
+import global_menu from "../global_information/global_menu";
 
 function CustomiseMenuPage({ route, navigation }) {
   // Have a component that handles each category of menu
@@ -23,10 +25,12 @@ function CustomiseMenuPage({ route, navigation }) {
         <Button title='hello' onPress={() => console.log(route.params)} />
         <Button title='Add Menu Item' onPress={() => addMenuItem('Delux Fried Rice', 10, {size: {small: 0, medium: 0.5, large: 0.5}, spice: {'little spice' : 0.5, spicy: 0.8, hot: 1}})} />
       </View> */}
-
+      
       <View style={styles.menuScrollView}>
         <ScrollView>
-          <Text>HELLO</Text>
+          <MenuCategoryDisplay key={route.params} />
+          <Text>{route.params}</Text>
+          <Button title="Get OBJ" onPress={() => console.log(global_menu.menuMap)} />
         </ScrollView>
       </View>
     </View>

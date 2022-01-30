@@ -8,7 +8,7 @@ import { EditMenuDropDown } from '../utility/EditMenuDropDown';
 
 function EditMenu() {
     // Array of menu names for retrieveing purposes:
-    const menuList = global.menu_list['_W'];
+    const menuList = global.menu_list;
     // setter function rerenders the screen!
     const [menuBarComponents, setMenuBarComponents] = useState([]);
     
