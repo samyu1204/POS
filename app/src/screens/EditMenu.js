@@ -1,38 +1,53 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { getMenuList, addMenuNameToList, addMenu } from '../database/firebase-utility';
-import global from '../global_information/global';
+import { getMenuList, addMenuNameToList, addMenu, getMenuAsMap } from '../database/firebase-utility';
+import global, { menu_list } from '../global_information/global';
 import { MenuBar } from '../utility/MenuBar';
 import { EditMenuDropDown } from '../utility/EditMenuDropDown';
+
 function EditMenu() {
-    const [menuList, setMenuList] = useState(global.menu_list['_W']);
+    // Array of menu names for retrieveing purposes:
+    const menuList = global.menu_list['_W'];
+    // setter function rerenders the screen!
+    const [menuBarComponents, setMenuBarComponents] = useState([]);
+    
+
+    const renderMenuBars = () => {
+        setMenuBarComponents(menuList.map(name => <MenuBar menuName={name} key={name} />));
+    }
+    
+    // also have to add to data base
+    // - make a data base utility function that does this which also updates global
+    const addMenu = () => {
+        menuList.push("example");
+        renderMenuBars()
+    }
+    
+    // Do after render:
+
+    useEffect(() => {
+        renderMenuBars()
+    }, [])
 
     return(
         <View style={styles.background}>
             <View style={{top: "3%", left: "10%", position: 'absolute'}}>
                 <Text style={styles.menuSubTitle} > Menus: </Text>
             </View>
-            
+
             <View style={styles.scrollViewDesign}>
                 <ScrollView style={{width: 1000}}>
-                    <MenuBar />
-                    <MenuBar />
-                    <MenuBar />
-                    <MenuBar />
-                    <MenuBar />
-                    <MenuBar />
-                    <MenuBar />
-                    <MenuBar />
-                    <MenuBar />
+                    {menuBarComponents}
                 </ScrollView>
             </View>
 
-
             <View style={styles.newMenuButton}>
-                <TouchableOpacity style={styles.addMenuButton}>
+                <TouchableOpacity style={styles.addMenuButton} onPress={() => addMenu()} >
                     <Text style={{fontSize: 15}}> Create New Menu </Text>
                 </TouchableOpacity>
+
+
             </View>
         </View>
     );

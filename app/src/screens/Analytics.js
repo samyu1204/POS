@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button, KeyboardAvoidingView, TextInput } from "react-native";
 import { getUserData, addData } from "../database/firebase-utility";
 import { addUser } from "../database/firebase-utility";
 import { getMenuData } from "../database/firebase-utility";
@@ -17,15 +17,29 @@ function Analytics() {
   };
 
   return (
-    <View style={styles.background}>
-      <Text> {global.session_user} </Text>
-      <Button title="Add Data" onPress={getMenuData} />
-      <Button
-        title="Get User DATA"
-        onPress={() => getUserData(global.session_user)}
+    <KeyboardAvoidingView
+      style={{flex: 1, backgroundColor: 'orange'}}
+      behavior='position'
+      enabled
+    >
+      <TextInput
+        placeholder="Email"
+        style={{top: 500}}
       />
-      <Button title="email" onPress={getSomething} />
-    </View>
+      <TextInput
+        placeholder="Username"
+        style={{top: 500}}
+      />
+      <TextInput
+        placeholder="Password"
+        style={{top: 500}}
+      />
+      <TextInput
+        placeholder="Confirm Password"
+        style={{top: 500}}
+      />
+      <View style={{ height: 60 }} />
+    </KeyboardAvoidingView>
   );
 }
 
