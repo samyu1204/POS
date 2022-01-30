@@ -15,6 +15,8 @@ function CustomDrawer(props) {
         signOut(authentication)
         .then((re) => {
             global.session_user = null;
+            global.menu_list = null;
+            global.menuMap = null;
             navigation.navigate('Home');
         })
         .catch((err) => {
