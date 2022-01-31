@@ -6,7 +6,9 @@ function AdjustmentDisplay(props) {
   const [adjustments, setAdjustments] = useState();
 
   const renderAdjustments = () => {
-    setAdjustments(Object.keys(props.adjustments).map(name => <AdjustmentComponent name={name} adjustmentDetails={props.adjustments[name]} />));
+    setAdjustments(Object.keys(props.adjustments).map(name => 
+      <AdjustmentComponent key={name} name={name} adjustmentDetails={props.adjustments[name]} 
+    />));
   }
 
   useEffect(() => {
