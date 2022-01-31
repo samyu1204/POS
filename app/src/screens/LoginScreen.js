@@ -31,7 +31,6 @@ function RegisterScreen() {
     .then((re) => {
       global.session_user = email;
       setGlobalMenuList();
-      mapGlobalMenu();
       navigation.navigate('Start');
     })
     .catch((err) => {

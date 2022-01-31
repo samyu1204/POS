@@ -85,29 +85,18 @@ export const addMenuItem = async(itemName, basePrice, adjustment) => {
  *  - Fetching menu list again
  *  - Using global variables
  */
-export const mapGlobalMenu = async() => {
-    if (global.menuMap === null) {
-        global.menuMap = new Map();
+export const getMenuMap = async(menuName) => {
+    const menuRef = await getDocs(collection(db, global.session_user, 'menus', menuName));
+    const menu = menuRef.docs.map(doc => doc.data());
+    const menu_id = menuRef.docs.map(doc => doc.id);
+
+    const menuMap = new Map();
+
+    for (let i = 0; i < menu.length; i++) {
+        menuMap.set(menu_id[i], menu[i])
     }
-
-    const docSnap = await getDoc(doc(db, global.session_user, 'user_info'));
-    const menuList = docSnap.data()['menu_list'];
-
-    for (let i = 0; i < menuList.length; i++) {
-        const menuRef = await getDocs(collection(db, global.session_user, 'menus', menuList[i]));
-        const menu = menuRef.docs.map(doc => doc.data());
-        const menu_id = menuRef.docs.map(doc => doc.id);
-
-        // console.log(menu)
-        // console.log(menu_id)
-        const menuMap = new Map();
-
-        for (let i = 0; i < menu.length; i++) {
-            menuMap.set(menu_id[i], menu[i])
-        }
-        // Map the menu name to the menu map:
-        global.menuMap.set(global.menu_list[i], menuMap)
-    }
+    // Map the menu name to the menu map:
+    return menuMap;
 }
 
 
