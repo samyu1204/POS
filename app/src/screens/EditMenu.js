@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Button, TouchableOpacity, useIsFocused  } from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { getMenuList, addMenu } from '../database/firebase-utility';
 import global, { menu_list } from '../global_information/global';
 import { MenuBar } from '../edit_menu_components/MenuBar';
 import { EditMenuDropDown } from '../utility/EditMenuDropDown';
 
-function EditMenu() {
+function EditMenu({ navigation }) {
     // Array of menu names for retrieveing purposes:
     const menuList = global.menu_list;
     // setter function rerenders the screen!
@@ -22,7 +22,7 @@ function EditMenu() {
     const createNewMenu = () => {
         if (!newMenuName) { 
             alert('Menu Name Required!');
-            return;    
+            return;
         }
         addMenu(newMenuName);
         menuList.push(newMenuName);
@@ -30,9 +30,12 @@ function EditMenu() {
         setNewMenuName('');
     }
 
-    useEffect(() => {
-        renderMenuBars()
-    }, [])
+    React.useEffect(() => {
+        // Focus screen then do something:
+        navigation.addListener('focus', () => {
+            renderMenuBars()
+        });
+    }, [navigation])
 
     return(
         <View style={styles.background}>
