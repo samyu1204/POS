@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { getMenuList, addMenuNameToList, addMenu, getMenuAsMap } from '../database/firebase-utility';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import { getMenuList, addMenu } from '../database/firebase-utility';
 import global, { menu_list } from '../global_information/global';
-import { MenuBar } from '../utility/MenuBar';
+import { MenuBar } from '../edit_menu_components/MenuBar';
 import { EditMenuDropDown } from '../utility/EditMenuDropDown';
 
 function EditMenu() {
@@ -11,20 +11,24 @@ function EditMenu() {
     const menuList = global.menu_list;
     // setter function rerenders the screen!
     const [menuBarComponents, setMenuBarComponents] = useState([]);
+    const [newMenuName, setNewMenuName] = useState();
     
 
     const renderMenuBars = () => {
         setMenuBarComponents(menuList.map(name => <MenuBar menuName={name} key={name} />));
     }
     
-    // also have to add to data base
-    // - make a data base utility function that does this which also updates global
-    const addMenu = () => {
-        menuList.push("example");
-        renderMenuBars()
-    }
-    
     // Do after render:
+    const createNewMenu = () => {
+        if (!newMenuName) { 
+            alert('Menu Name Required!');
+            return;    
+        }
+        addMenu(newMenuName);
+        menuList.push(newMenuName);
+        renderMenuBars();
+        setNewMenuName('');
+    }
 
     useEffect(() => {
         renderMenuBars()
@@ -43,11 +47,15 @@ function EditMenu() {
             </View>
 
             <View style={styles.newMenuButton}>
-                <TouchableOpacity style={styles.addMenuButton} onPress={() => addMenu()} >
+                <TextInput 
+                    style={{ bottom: '5%' }} 
+                    placeholder='Enter Menu Name' 
+                    onChangeText={newText => setNewMenuName(newText)}
+                    value={newMenuName}
+                /> 
+                <TouchableOpacity style={styles.addMenuButton} onPress={() => {createNewMenu()}} >
                     <Text style={{fontSize: 15}}> Create New Menu </Text>
                 </TouchableOpacity>
-
-
             </View>
         </View>
     );

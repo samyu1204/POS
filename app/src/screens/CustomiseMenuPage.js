@@ -9,6 +9,7 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { addMenuItem } from "../database/firebase-utility";
 import MenuCategoryDisplay from "../edit_menu_components/MenuCategoryDisplay";
 
+
 // Stores temporarily the menu map:
 let menuMap = null;
 
@@ -20,7 +21,11 @@ function CustomiseMenuPage({ route, navigation }) {
   const renderCategoryDisplay = async() => {
     await getMenuMap(route.params).then((data) => { menuMap = data }) // fetching data
     const categoryArray = Array.from(menuMap.keys());
-    setCategoryDisplays(categoryArray.map(name => <MenuCategoryDisplay categoryName={name} key={name} categoryObject={menuMap.get(name)} />));
+    setCategoryDisplays(categoryArray.map(name => {
+      if (name !== 'menu_info') {
+        return <MenuCategoryDisplay categoryName={name} key={name} categoryObject={menuMap.get(name)} />
+      }
+    }));
   }
 
   useEffect(() => {
@@ -35,8 +40,6 @@ function CustomiseMenuPage({ route, navigation }) {
 
       <View style={{ position: 'absolute', marginTop: '13%' }}>
         <Text style={{ fontSize: 40, fontWeight: 'bold' }}>Menu: {route.params}</Text>
-        {/* <Button title="Get OBJ" onPress={() => console.log(Array.from(menuMap.keys()))} />
-        <Button title="Get Map Object" onPress={() => console.log(menuMap) } /> */}
       </View>
       
       <View style={styles.menuScrollView}>

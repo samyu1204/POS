@@ -33,13 +33,6 @@ export const setGlobalMenuList = async () => {
     global.menu_list = docSnap.data()['menu_list'];
 }
 
-
-export const getMenuData = async() => {
-    const menuSnapshot = await getDocs(collection(db, global.session_user, 'menus', 'lunch'));
-    const menuList = menuSnapshot.docs.map(doc => doc.data());
-    console.log(menuList);
-}
-
 // ======================================================================================
 // Functions relation to add to menu:
 
@@ -98,5 +91,3 @@ export const getMenuMap = async(menuName) => {
     // Map the menu name to the menu map:
     return menuMap;
 }
-
-
