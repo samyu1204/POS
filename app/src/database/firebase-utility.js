@@ -1,6 +1,7 @@
-import { collection, getDocs, doc, setDoc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore/lite';
+import { collection, getDocs, doc, setDoc, updateDoc, arrayUnion, getDoc, arrayRemove, deleteDoc } from 'firebase/firestore/lite';
 import { db } from '../database/firebase-config';
 import global from '../global_information/global';
+
 // Data getter function:
 export const getUserData = async () => {
     const citySnapshot = await getDocs(collection(db, global.session_user));
@@ -31,6 +32,26 @@ export const setGlobalMenuList = async () => {
     const menuRef = doc(db, global.session_user, 'user_info');
     const docSnap = await getDoc(menuRef);
     global.menu_list = docSnap.data()['menu_list'];
+}
+
+// ======================================================================================
+// Removing Menu:
+export const removeMenu = async(menuName) => {
+    // Delete recorded name in user info of the menu:
+    await updateDoc(doc(db, global.session_user, 'user_info'), {
+        menu_list: arrayRemove(menuName)
+    });
+    
+    // Get all doc names:
+    const docRef = await getDocs(collection(db, global.session_user, 'menus', menuName));
+    // Array of id's:
+    const doc_id = docRef.docs.map(doc => doc.id);
+
+    // Delete the doc of the menu:
+    for (let i = 0; i < doc_id.length; i++) {
+        console.log('HI')
+        await deleteDoc(doc(db, global.session_user, "menus", menuName, doc_id[i]));
+    }
 }
 
 // ======================================================================================
