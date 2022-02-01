@@ -16,7 +16,6 @@ function AdjustmentComponent(props) {
     return (
         <View style={styles.background}>
             <Text style={{ fontSize: 20, color: 'white' }}> {props.name} </Text>
-            {/* <Button title="Hello" onPress={() => console.log(props.adjustmentDetails)}/> */}
             {adjElement}
         </View>
     );

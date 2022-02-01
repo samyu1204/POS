@@ -2,22 +2,14 @@ import { collection, getDocs, doc, setDoc, updateDoc, arrayUnion, getDoc, arrayR
 import { db } from '../database/firebase-config';
 import global from '../global_information/global';
 
-// Data getter function:
-export const getUserData = async () => {
-    const citySnapshot = await getDocs(collection(db, global.session_user));
-    const cityList = citySnapshot.docs.map(doc => doc.data());
-    console.log(cityList);
-
-}
-
 export const addData = async () => {
     const city = 'hello this is new';
     await setDoc(doc(db, 'cities', 'random'), {
         city_name: city,
     })
 }
-
-// Create new user collection:
+// ======================================================================================
+// User creation functions:
 export const addUser = async (email) => {
     await setDoc(doc(db, email, 'user_info'), {
         user_email: email,
@@ -27,7 +19,7 @@ export const addUser = async (email) => {
 
 
 // ======================================================================================
-// Functions relation to getting menu:
+// Functions relation to getting information from the menu:
 export const setGlobalMenuList = async () => {
     const menuRef = doc(db, global.session_user, 'user_info');
     const docSnap = await getDoc(menuRef);
@@ -49,14 +41,14 @@ export const removeMenu = async(menuName) => {
 
     // Delete the doc of the menu:
     for (let i = 0; i < doc_id.length; i++) {
-        console.log('HI')
         await deleteDoc(doc(db, global.session_user, "menus", menuName, doc_id[i]));
     }
 }
 
 // ======================================================================================
-// Functions relation to add to menu:
+// Functions relation to adding to menu:
 
+// Adding a new menu name to the info list:
 export const addMenuNameToList = async (menuName) => {
     await updateDoc(doc(db, global.session_user, 'user_info'), {
         menu_list: arrayUnion(menuName)
@@ -64,7 +56,7 @@ export const addMenuNameToList = async (menuName) => {
 }
 
 export const addMenu = async (menuName) => {
-    // Create a menu_info doc:
+    // Create a menu_info doc along with the actual menu collection:
     await setDoc(doc(db, global.session_user, 'menus', menuName, 'menu_info'), {});
     // Add it to menu list:
     await updateDoc(doc(db, global.session_user, 'user_info'), {
@@ -111,4 +103,20 @@ export const getMenuMap = async(menuName) => {
     }
     // Map the menu name to the menu map:
     return menuMap;
+}
+
+
+// ======================================================================================
+// Getting Menu Information:
+export const getMenuCategoryId = async(menuName) => {
+    const menuRef = await getDocs(collection(db, global.session_user, 'menus', menuName));
+    const menu_id = menuRef.docs.map(doc => doc.id);
+
+    for( let i = 0; i < menu_id.length; i++){                            
+        if ( menu_id[i] === 'menu_info') { 
+            menu_id.splice(i, 1); 
+        }
+    }
+    
+    return menu_id;
 }

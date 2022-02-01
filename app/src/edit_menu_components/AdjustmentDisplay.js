@@ -18,7 +18,6 @@ function AdjustmentDisplay(props) {
   return (
     <View style={styles.background}>
         {adjustments}
-        {/* <Button title="Helo" onPress={() => console.log(Object.keys(props.adjustments))} /> */}
     </View>
   );
 }
