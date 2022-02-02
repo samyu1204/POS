@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Modal, StyleSheet, Text, Pressable, View, Button } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getMenuCategoryId } from "../database/firebase-utility";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -12,17 +12,25 @@ const AddItemPopUp = (props) => {
   // New menu information:
   const [itemName, setItemName] = useState('');
 
+  // Sets the drop down list names from firebase:
   const setCategories = async () => {
     let catArray = await getMenuCategoryId(props.menuName).then((data) => { return data; });
+    const tmpArray = []
     for (let i = 0; i < catArray.length; i++) {
       const obj = {};
       obj['label'] = catArray[i];
-      obj['value'] = (catArray[i] + "").toUpperCase();
-      setItems(old => [...old, obj]);
+      obj['value'] = catArray[i];
+      tmpArray.push(obj);
     }
+    setItems(tmpArray);
   }
 
-  // For dropdown:
+  /**
+   * Drop down states:
+   *  - open -> open and close dropdown
+   *  - 
+   */
+
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([]);
@@ -52,13 +60,7 @@ const AddItemPopUp = (props) => {
             > New Menu Item </Text>
 
             {/* View for taking input of item name: */}
-            <View style={
-              { marginTop: '4%', 
-                marginLeft: '4%', 
-                alignSelf: 'flex-start', 
-                flexDirection: 'row',
-              }}
-            >
+            <View style={styles.formElement}>
               <Text style={{ fontWeight: 'bold', fontSize: 25 }}> Item Name: </Text>
               <TextInput 
                 style={styles.nameInput} 
@@ -67,16 +69,11 @@ const AddItemPopUp = (props) => {
                 value={itemName}
                 onChangeText={newText => setItemName(newText)}
               />
-              <Button title="Get" onPress={() => getMenuCategoryId(props.menuName).then((data) => console.log(data))}/>
+              <Button title="Get" onPress={() => getMenuCategoryId(props.menuName).then((data) => console.log(value))}/>
             </View>
             
             {/* This is for menu dropdown */}
-            <View style={{
-              marginTop: '4%',
-              flexDirection: 'row',
-              marginLeft: '4%', 
-              alignSelf: 'flex-start', 
-            }}>
+            <View style={styles.formElement}>
               <Text style={{ fontWeight: 'bold', fontSize: 25 }}>Item Category:</Text>
               <DropDownPicker
                 open={open}
@@ -86,13 +83,40 @@ const AddItemPopUp = (props) => {
                 setValue={setValue}
                 setItems={setItems}
                 fontSize={20}
+                dropDownContainerStyle={
+                  { width: 215, 
+                    marginLeft: '3%', 
+                    backgroundColor: '#BBDEFB',
+                     borderColor: 'white' 
+                }}
                 style={{
                   width: 250,
                   marginLeft: '3%',
-                  height: 40
+                  height: 40,
+                  backgroundColor: '#BBDEFB',
+                  borderColor: 'white'
                 }}
               />
             </View>
+            
+            {/* Addons Scroll View? */}
+            <View style={styles.formElement}>
+              <Text style={{ fontWeight: 'bold', fontSize: 25 }}>Adjustment:</Text>
+            </View>
+            
+            <View style={{
+              alignItems: 'flex-start'
+            }}>
+              <ScrollView style={{
+                backgroundColor: 'black',
+                position: 'absolute',
+                height: 250,
+                width: 500
+              }}>
+                <Text> HELLO </Text>
+              </ScrollView>
+            </View>
+
             <Ionicons style={styles.cancelButton} name='close' size={50} onPress={() => setModalVisible(!modalVisible)} /> 
           </View>
         </View>
@@ -166,6 +190,12 @@ const styles = StyleSheet.create({
     fontSize: 25,
     borderBottomColor: 'blue',
     borderBottomWidth: 2,
+  },
+  formElement: {
+    marginTop: '4%',
+    marginLeft: '4%', 
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
   }
 });
 

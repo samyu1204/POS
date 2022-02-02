@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+import global from '../global_information/global';
 
 function MenuScreen() {
     const [name, setName] = useState();
@@ -11,6 +12,9 @@ function MenuScreen() {
             </View>
             <View style={styles.addMenu}>
                 <TextInput onChangeText={(text) => setName(text)} placeholder='Enter'  />
+            </View>
+            <View style={{top: -100}}>
+            <Button title='Hello' onPress={() => console.log(global.session_user)} />
             </View>
         </View>
     );

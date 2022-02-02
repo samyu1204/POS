@@ -20,10 +20,14 @@ export const addUser = async (email) => {
 
 // ======================================================================================
 // Functions relation to getting information from the menu:
-export const setGlobalMenuList = async () => {
-    const menuRef = doc(db, global.session_user, 'user_info');
+export const getMenuListFromFirebase = async () => {
+    // const menuRef = doc(db, global.session_user, 'user_info');
+    // const docSnap = await getDoc(menuRef);
+    // console.log(docSnap.data())
+    // global.menu_list = docSnap.data()['menu_list'];
+    const menuRef = doc(db, 'c@gmail.com', 'user_info');
     const docSnap = await getDoc(menuRef);
-    global.menu_list = docSnap.data()['menu_list'];
+    return docSnap.data()['menu_list'];
 }
 
 // ======================================================================================
@@ -92,9 +96,9 @@ export const addMenuItem = async(itemName, basePrice, adjustment) => {
  *  - Using global variables
  */
 export const getMenuMap = async(menuName) => {
-    const menuRef = await getDocs(collection(db, global.session_user, 'menus', menuName));
-    const menu = menuRef.docs.map(doc => doc.data());
-    const menu_id = menuRef.docs.map(doc => doc.id);
+    const menuSnap = await getDocs(collection(db, global.session_user, 'menus', menuName));
+    const menu_id = menuSnap.docs.map(doc => doc.id)
+    const menu = menuSnap.docs.map(doc => doc.data());
 
     const menuMap = new Map();
 
@@ -104,7 +108,6 @@ export const getMenuMap = async(menuName) => {
     // Map the menu name to the menu map:
     return menuMap;
 }
-
 
 // ======================================================================================
 // Getting Menu Information:

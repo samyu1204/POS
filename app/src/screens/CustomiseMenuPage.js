@@ -10,6 +10,7 @@ import { addMenuItem, removeMenu } from "../database/firebase-utility";
 import MenuCategoryDisplay from "../edit_menu_components/MenuCategoryDisplay";
 import AddItemPopUp from "../edit_menu_components/AddItemPopUp";
 
+
 // Stores temporarily the menu map:
 let menuMap = null;
 
@@ -92,7 +93,7 @@ function CustomiseMenuPage({ route, navigation }) {
           <AddItemPopUp menuName={route.params} />
         </View>
 
-        <TouchableOpacity style={styles.addCategoryItem} onPress={() => console.log('Button')}>
+        <TouchableOpacity style={styles.addCategoryItem} onPress={() => console.log('hi') }>
           <Text style={{ fontSize: 30, color: 'white' }}>Add Category</Text> 
         </TouchableOpacity>
 
