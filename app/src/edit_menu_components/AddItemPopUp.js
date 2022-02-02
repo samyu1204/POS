@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Modal, StyleSheet, Text, Pressable, View, Button } from "react-native";
+import { Alert, Modal, StyleSheet, Text, Pressable, View, Button, TouchableOpacity, Animated, Dimensions } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getMenuCategoryId } from "../database/firebase-utility";
 import DropDownPicker from "react-native-dropdown-picker";
+import { CreateAdjPopUp } from "../edit_menu_pop_ups/CreateAdjPopUp";
 
 const AddItemPopUp = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -11,6 +12,7 @@ const AddItemPopUp = (props) => {
 
   // New menu information:
   const [itemName, setItemName] = useState('');
+  const [basePrice, setBasePrice] = useState();
 
   // Sets the drop down list names from firebase:
   const setCategories = async () => {
@@ -25,12 +27,33 @@ const AddItemPopUp = (props) => {
     setItems(tmpArray);
   }
 
+  // Animation
+  const ball = new Animated.ValueXY({
+    x: Dimensions.get('screen').width/6, 
+    y: Dimensions.get('screen').height/8 
+  });
+
+  const moveView = () => {
+    Animated.timing(ball, {
+        toValue: {x: 0, y: Dimensions.get('screen').height/8 },
+        duration: 500,
+        useNativeDriver: false,
+    }).start()
+  }
+
+  const returnView = () => {
+      Animated.timing(ball, {
+          toValue: {x: Dimensions.get('screen').width/6, y: Dimensions.get('screen').height/8},
+          duration: 500,
+          useNativeDriver: false,
+      }).start()
+  }
+
   /**
    * Drop down states:
    *  - open -> open and close dropdown
    *  - 
    */
-
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([]);
@@ -51,7 +74,7 @@ const AddItemPopUp = (props) => {
       }}>
         <View style={styles.centeredView}>
           {/* Modal view: */}
-          <View style={styles.modalView}>
+          <Animated.View  style={[styles.modalView, ball.getLayout()]}>
             <Text style={
               { color: '#8BC34A', 
               fontSize: 35, 
@@ -61,15 +84,15 @@ const AddItemPopUp = (props) => {
 
             {/* View for taking input of item name: */}
             <View style={styles.formElement}>
-              <Text style={{ fontWeight: 'bold', fontSize: 25 }}> Item Name: </Text>
+              <Text style={{ fontWeight: 'bold', fontSize: 25 }}>Item Name: </Text>
               <TextInput 
                 style={styles.nameInput} 
                 placeholder="Enter Item Name" 
-                width={200} textAlign="center" 
+                width={200}
                 value={itemName}
                 onChangeText={newText => setItemName(newText)}
               />
-              <Button title="Get" onPress={() => getMenuCategoryId(props.menuName).then((data) => console.log(value))}/>
+              <Button title="Get" onPress={() => console.log(Dimensions.get('screen').height)} />
             </View>
             
             {/* This is for menu dropdown */}
@@ -98,29 +121,47 @@ const AddItemPopUp = (props) => {
                 }}
               />
             </View>
-            
+              
+            {/* Base price */}
+            <View style={styles.formElement}>
+              <Text style={{ fontWeight: 'bold', fontSize: 25 }}>Base Price:</Text>
+              <TextInput 
+                style={styles.nameInput} 
+                placeholder="Enter Base Price" 
+                width={200} 
+                value={basePrice}
+                onChangeText={newText => setBasePrice(newText)}
+              />
+            </View>
+
             {/* Addons Scroll View? */}
             <View style={styles.formElement}>
               <Text style={{ fontWeight: 'bold', fontSize: 25 }}>Adjustment:</Text>
             </View>
             
             <View style={{
-              alignItems: 'flex-start'
+              alignItems: 'center'
             }}>
               <ScrollView style={{
-                backgroundColor: 'black',
+                backgroundColor: 'yellow',
                 position: 'absolute',
-                height: 250,
-                width: 500
+                height: 200,
+                width: 700
               }}>
-                <Text> HELLO </Text>
+
+                <View>
+                  {/* This is the pop up for creating new
+                      adjustment factors to a menu item */}
+                  <CreateAdjPopUp moveFunc={moveView} moveBack={returnView} />
+                </View>
               </ScrollView>
             </View>
 
             <Ionicons style={styles.cancelButton} name='close' size={50} onPress={() => setModalVisible(!modalVisible)} /> 
-          </View>
+          </Animated.View >
         </View>
       </Modal>
+
       <Pressable
         style={styles.addItemButton}
         onPress={() => setModalVisible(true)}
@@ -138,7 +179,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalView: {
-    margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
@@ -152,8 +192,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     position: 'absolute',
-    height: 600,
-    width: 900,
+    height: Dimensions.get('screen').height/1.4,
+    width: Dimensions.get('screen').width/1.5,
   },
   button: {
     borderRadius: 20,
@@ -190,6 +230,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     borderBottomColor: 'blue',
     borderBottomWidth: 2,
+    left: 5
   },
   formElement: {
     marginTop: '4%',

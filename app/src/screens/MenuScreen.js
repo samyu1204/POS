@@ -1,47 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
-import global from '../global_information/global';
+import React from 'react';
+import {Animated, Button, Dimensions, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 function MenuScreen() {
-    const [name, setName] = useState();
-    return(
-        <View style={styles.background}>
-            <View style={{ top: 100, position: 'absolute' }}>
-                <Text>{name}</Text>
-            </View>
-            <View style={styles.addMenu}>
-                <TextInput onChangeText={(text) => setName(text)} placeholder='Enter'  />
-            </View>
-            <View style={{top: -100}}>
-            <Button title='Hello' onPress={() => console.log(global.session_user)} />
-            </View>
+    const ball = new Animated.ValueXY({x: 30, y: 30});
+
+    const moveBall = () => {
+        Animated.timing(ball, {
+            toValue: {x: 500, y: 30},
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+    }
+    const moveBack = () => {
+        Animated.timing(ball, {
+            toValue: {x: 30, y: 30},
+            duration: 500,
+            useNativeDriver: false,
+        }).start()
+    }
+
+
+    return (
+        <View style={styles.container}>
+            <Animated.View style={[styles.ball, ball.getLayout()]}>
+                <Text style={styles.text}>+</Text>
+                <Text style={styles.text}>HELLO</Text>
+                <Button title='Move' onPress={moveBall} />
+                <Button title='Move Back' onPress={moveBack} />
+            </Animated.View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    background: {
-      flex: 1,
-      justifyContent: "flex-end",
-      alignItems: "center",
-      backgroundColor: "#D1E3DA",
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignContent: 'center',
     },
-    addMenu: {
-        backgroundColor: 'white', 
-        borderRadius: 30, 
-        position: 'absolute', 
-        top: 6,
-        width: 500,
+    ball: {
+        width: 200,
+        height: 500,
+        backgroundColor: 'red',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     text: {
-        textAlign: 'center',
-        marginTop: 5,
-    },
-    saveButton: {
-        backgroundColor: 'green',
-        top: -500,
-    },  
-})
+        fontWeight: 'bold',
+        color: 'white',
+        fontSize: 32
+    }
+});
 
 export default MenuScreen;
