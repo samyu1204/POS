@@ -10,10 +10,13 @@ import { Triangle } from "./Triangle";
 
 export const CreateAdjPopUp = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [itemObj, setItemObj] = useState({});
 
-  // New menu information:
-  const [itemName, setItemName] = useState('');
+  // Input fields:
+  const [adjName, setAdjName] = useState();
+
+  // Price key value tags:
+  const [keys, setKeys] = useState();
+  const [keyValue, setKeyValue] = useState();
 
   return (
     <View style={styles.centeredView}>
@@ -25,18 +28,51 @@ export const CreateAdjPopUp = (props) => {
           Alert.alert("Modal has been closed.");
           setModalVisible(!modalVisible);
       }}>
+        
         <View style={styles.centeredView}>
-          <View style={styles.triangleCustom}>
-            <Triangle />
-          </View>
+
           {/* Modal view: */}
           <View style={styles.modalView}>
-            <Text style={
-              { color: '#8BC34A', 
-              fontSize: 20, 
-              fontWeight: 'bold' 
-              }}
-            >New Adjustment</Text>
+            <Triangle />
+            <Text style={{
+              fontSize: 30,
+              color: '#81C784',
+              fontWeight: 'bold'
+            }}>
+              New Adjustment
+            </Text>
+
+            <View style={{flexDirection: 'row', alignItems: 'center', top: '8%'}}>
+              <View style={{flex: 1, height: 1, backgroundColor: '#194D33'}} />
+              <View>
+                <Text style={{width: 50, textAlign: 'center', color: '#194D33'}}>XXXXX</Text>
+              </View>
+              <View style={{flex: 1, height: 1, backgroundColor: '#194D33'}} />
+            </View>
+
+            <View style={styles.displayView}>
+              <Text style={styles.displayText}>Adjustment Name:</Text>
+              <TextInput 
+                style={styles.displayText} 
+                placeholder="Enter Adjustment Name" 
+                width={200} 
+                value={adjName}
+                onChangeText={newText => setAdjName(newText)}
+              />
+            </View>
+
+            <View style={styles.displayView}>
+              <Text style={styles.displayText}>Fields :</Text>
+              <TextInput 
+                style={styles.displayText} 
+                placeholder="Enter Keys Separated With Spaces" 
+                width={200} 
+                value={adjName}
+                onChangeText={newText => setAdjName(newText)}
+              />
+
+            </View>
+
             <Ionicons style={styles.cancelButton} name='close' size={50} onPress={() => {
               setModalVisible(!modalVisible)
               props.moveBack()
@@ -74,6 +110,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: '2%',
     top: Dimensions.get('screen').height/8,
+    borderRadius: 25
   },
   button: {
     borderRadius: 20,
@@ -117,8 +154,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: 20,
   },
-  triangleCustom: {
-    position: 'absolute',
-    right: '7%',
+  displayView: {
+    marginTop: '15%',
+    alignSelf: 'flex-start',
+    alignSelf: 'center'
+  },
+  displayText: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    alignSelf: 'center',
   }
 });

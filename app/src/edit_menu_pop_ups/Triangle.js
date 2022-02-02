@@ -18,6 +18,8 @@ const styles = StyleSheet.create({
     borderRightColor: "transparent",
     borderBottomColor: "#DCEDC8",
     transform: [{ rotate: '-90deg' }],
-
+    position: 'absolute',
+    right: '22%',
+    top: '52%'
   },
 });

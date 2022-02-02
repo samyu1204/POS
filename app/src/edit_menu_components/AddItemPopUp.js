@@ -81,7 +81,7 @@ const AddItemPopUp = (props) => {
               fontWeight: 'bold' 
               }}
             > New Menu Item </Text>
-
+            <Button title="Get" onPress={() => console.log(value)} />
             {/* View for taking input of item name: */}
             <View style={styles.formElement}>
               <Text style={{ fontWeight: 'bold', fontSize: 25 }}>Item Name: </Text>
@@ -92,9 +92,8 @@ const AddItemPopUp = (props) => {
                 value={itemName}
                 onChangeText={newText => setItemName(newText)}
               />
-              <Button title="Get" onPress={() => console.log(Dimensions.get('screen').height)} />
             </View>
-            
+
             {/* This is for menu dropdown */}
             <View style={styles.formElement}>
               <Text style={{ fontWeight: 'bold', fontSize: 25 }}>Item Category:</Text>
@@ -131,6 +130,7 @@ const AddItemPopUp = (props) => {
                 width={200} 
                 value={basePrice}
                 onChangeText={newText => setBasePrice(newText)}
+                keyboardType='number-pad'
               />
             </View>
 

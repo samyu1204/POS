@@ -66,7 +66,7 @@ function CustomiseMenuPage({ route, navigation }) {
 
   return (
     <View style={styles.background}>
-      <View style={{marginTop: '7%', right: '60%'}}>
+      <View style={{marginTop: '7%', right: '85%', position: 'absolute'}}>
         <Ionicons style={styles.returnButton} name='arrow-undo-circle-outline' size={50} onPress={() => navigation.goBack()} /> 
       </View>
 
