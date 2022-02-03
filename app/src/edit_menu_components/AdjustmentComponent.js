@@ -8,7 +8,6 @@ function AdjustmentComponent(props) {
     const renderElements = () => {
         setAdjElement(Object.keys(props.adjustmentDetails).map(name => <AdjustmentElement key={name} name={name} price={props.adjustmentDetails[name]} />));
       }
-    
       useEffect(() => {
         renderElements()
       }, [])

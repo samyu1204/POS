@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@firebase/app": "^0.7.11",
+    "@fortawesome/react-fontawesome": "^0.1.17",
     "@react-native-async-storage/async-storage": "^1.15.14",
     "@react-native-firebase/app": "^14.1.0",
     "@react-native-firebase/database": "^14.1.0",
@@ -41,6 +42,8 @@
     "react-native-navigation-container": "^1.0.6",
     "react-native-popup-menu": "^0.15.12",
     "react-native-reanimated": "^2.3.1",
+    "react-native-textinput-effects": "^0.6.2",
+    "react-native-vector-icons": "^9.0.0",
     "react-native-web": "0.17.1",
     "realm": "^10.11.0",
     "write-json-file": "^5.0.0"

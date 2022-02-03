@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Modal, StyleSheet, Text, Pressable, View, Button, TouchableOpacity, Animated, Dimensions } from "react-native";
+import { Alert, Modal, StyleSheet, Text, Pressable, View, Button, TouchableOpacity, Animated, Dimensions, KeyboardAvoidingView } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getMenuCategoryId } from "../database/firebase-utility";
@@ -143,12 +143,10 @@ const AddItemPopUp = (props) => {
               alignItems: 'center'
             }}>
               <ScrollView style={{
-                backgroundColor: 'yellow',
                 position: 'absolute',
                 height: 200,
                 width: 700
               }}>
-
                 <View>
                   {/* This is the pop up for creating new
                       adjustment factors to a menu item */}

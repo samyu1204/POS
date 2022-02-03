@@ -5,32 +5,35 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getMenuCategoryId } from "../database/firebase-utility";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Triangle } from "./Triangle";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { AdjElementField } from "./AdjElementField";
 
 // This is the pop up for adding new adjustment factors onto a menu item:
 
 export const CreateAdjPopUp = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
 
+  // Store AdjElementFields:
+  const [element, setElement] = useState();
+
   // Input fields:
   const [adjName, setAdjName] = useState();
 
   // Price key value tags:
-  const [keys, setKeys] = useState();
+  const [keys, setKeys] = useState([]);
   const [keyValue, setKeyValue] = useState();
 
   return (
     <View style={styles.centeredView}>
-      <Modal
-        animationType='fade'
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-      }}>
-        
+    <Modal
+      animationType='fade'
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => {
+        Alert.alert("Modal has been closed.");
+        setModalVisible(!modalVisible);
+        }}>
         <View style={styles.centeredView}>
-
           {/* Modal view: */}
           <View style={styles.modalView}>
             <Triangle />
@@ -62,16 +65,32 @@ export const CreateAdjPopUp = (props) => {
             </View>
 
             <View style={styles.displayView}>
-              <Text style={styles.displayText}>Fields :</Text>
+              <Text style={styles.displayText}>Fields:</Text>
               <TextInput 
-                style={styles.displayText} 
-                placeholder="Enter Keys Separated With Spaces" 
-                width={200} 
-                value={adjName}
-                onChangeText={newText => setAdjName(newText)}
+                style={{
+                  fontSize: 16
+                }} 
+                placeholder="Enter keys separated with commas." 
+                width={280} 
+                value={keys}
+                onChangeText={newText => {
+                  setKeys(newText.split(',').map((tmp) => { return tmp.trim() }));
+                }}
               />
-
+              <Button title="Set Field Values" onPress={() => {
+                setElement(keys.map(name => {
+                  console.log(name)
+                  if (name) { return <AdjElementField name={name} key={name} /> };
+                }))
+              }} />
             </View>
+
+            <Text style={{ marginTop: '15%', fontSize: 25, fontWeight: 'bold' }}>Field Values:</Text>
+            <ScrollView style={{
+              marginTop: '5%'
+            }}>
+              {element}
+            </ScrollView>
 
             <Ionicons style={styles.cancelButton} name='close' size={50} onPress={() => {
               setModalVisible(!modalVisible)
