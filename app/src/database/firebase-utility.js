@@ -74,7 +74,7 @@ export const addMenu = async (menuName) => {
  *  - Base Price -> passed in as number 
  *  - Addons -> object
  */
-export const addMenuItem = async(itemName, basePrice, adjustment) => {
+export const addMenuItem = async(category, itemName, basePrice, adjustment) => {
     // Create the menu item object
     let itemObj = {};
     itemObj[itemName] = {
@@ -83,7 +83,7 @@ export const addMenuItem = async(itemName, basePrice, adjustment) => {
     }
 
     // Update so it wont remove existing data:
-    await updateDoc(doc(db, global.session_user, 'menus', 'lunch', 'rice'), itemObj);
+    await updateDoc(doc(db, global.session_user, 'menus', 'lunch', category), itemObj);
 }
 
 

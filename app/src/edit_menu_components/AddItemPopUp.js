@@ -6,6 +6,7 @@ import { getMenuCategoryId } from "../database/firebase-utility";
 import DropDownPicker from "react-native-dropdown-picker";
 import { CreateAdjPopUp } from "../edit_menu_pop_ups/CreateAdjPopUp";
 import AdjustmentComponent from "./AdjustmentComponent";
+import { addMenuItem } from "../database/firebase-utility";
 
 const AddItemPopUp = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -177,6 +178,30 @@ const AddItemPopUp = (props) => {
                 />
               </ScrollView>
             </View>
+
+            <TouchableOpacity 
+              style={{
+                backgroundColor: '#FFB74D', 
+                paddingHorizontal: 40, 
+                paddingVertical: 10,
+                borderRadius: 10,
+                position: 'absolute',
+                alignSelf: 'center',
+                bottom: 0,
+                marginBottom: '1%'
+              }}
+              onPress={() => {
+                const tmp = {};
+                for (let i = 0; i < adjustments.length; i++) {
+                  for (const [key, value] of Object.entries(adjustments[i])) {
+                    tmp[key] = value;
+                  }
+                }
+                addMenuItem(value, itemName, basePrice, tmp);
+              }}
+            >
+              <Text style={{fontSize: 20, fontWeight: 'bold'}}>Confirm</Text>
+            </TouchableOpacity>
 
             <Ionicons style={styles.cancelButton} name='close' size={50} onPress={() => setModalVisible(!modalVisible)} /> 
           </Animated.View >
