@@ -10,7 +10,6 @@ import { addMenuItem, removeMenu } from "../database/firebase-utility";
 import MenuCategoryDisplay from "../edit_menu_components/MenuCategoryDisplay";
 import AddItemPopUp from "../edit_menu_components/AddItemPopUp";
 
-
 // Stores temporarily the menu map:
 let menuMap = null;
 

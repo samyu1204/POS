@@ -4,20 +4,23 @@ import { TextInput } from "react-native-gesture-handler";
 import { Kaede } from "react-native-textinput-effects";
 
 export function AdjElementField(props) {
-    const [price, setPrice] = useState();
 
-    return (
-        <View style={styles.background}>
-          
-          <Kaede
-            label={props.name}
-            labelStyle={{color: '#03A9F4', backgroundColor: '#BBDEFB'}}
-            inputPadding={16}
-            style={{width: '60%', top: '2%'}}
-            onChange={(num) => {setPrice(num)}}
-          />
-
-        </View>
+  return (
+      <View style={styles.background}>
+        <Kaede
+          label={props.name}
+          keyboardType='numeric'
+          labelStyle={{color: '#03A9F4', backgroundColor: '#BBDEFB'}}
+          inputPadding={16}
+          style={{width: '60%', top: '2%'}}
+          onChangeText={(num) => {
+            const tmp = {}
+            tmp[props.name] = Number(num);
+            props.func((prev) => [...prev, tmp])
+          }}
+        />
+        
+      </View>
     );
 }
 

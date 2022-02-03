@@ -5,6 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getMenuCategoryId } from "../database/firebase-utility";
 import DropDownPicker from "react-native-dropdown-picker";
 import { CreateAdjPopUp } from "../edit_menu_pop_ups/CreateAdjPopUp";
+import AdjustmentComponent from "./AdjustmentComponent";
 
 const AddItemPopUp = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -13,6 +14,12 @@ const AddItemPopUp = (props) => {
   // New menu information:
   const [itemName, setItemName] = useState('');
   const [basePrice, setBasePrice] = useState();
+  
+  // This stores array of objects that has key to value
+  const [adjustments, setAdjustments] = useState([]);
+
+  // Adjustment list view:
+  const [adjView, setAdjView] = useState(null);
 
   // Sets the drop down list names from firebase:
   const setCategories = async () => {
@@ -25,6 +32,18 @@ const AddItemPopUp = (props) => {
       tmpArray.push(obj);
     }
     setItems(tmpArray);
+  }
+
+  const renderAdjustmentList = () => {
+    const tmp = {};
+    for (let i = 0; i < adjustments.length; i++) {
+      for (const [key, value] of Object.entries(adjustments[i])) {
+        tmp[key] = value;
+      }
+    }
+    setAdjView(Object.keys(tmp).map(name => 
+      <AdjustmentComponent key={name} name={name} adjustmentDetails={tmp[name]} 
+    />));
   }
 
   // Animation
@@ -81,7 +100,6 @@ const AddItemPopUp = (props) => {
               fontWeight: 'bold' 
               }}
             > New Menu Item </Text>
-            <Button title="Get" onPress={() => console.log(value)} />
             {/* View for taking input of item name: */}
             <View style={styles.formElement}>
               <Text style={{ fontWeight: 'bold', fontSize: 25 }}>Item Name: </Text>
@@ -143,15 +161,20 @@ const AddItemPopUp = (props) => {
               alignItems: 'center'
             }}>
               <ScrollView style={{
-                position: 'absolute',
                 height: 200,
-                width: 700
+                width: 700,
               }}>
                 <View>
-                  {/* This is the pop up for creating new
-                      adjustment factors to a menu item */}
-                  <CreateAdjPopUp moveFunc={moveView} moveBack={returnView} />
+                  {/* All existing adj views: */}
+                  {adjView}
                 </View>
+                <CreateAdjPopUp 
+                  moveFunc={moveView} 
+                  moveBack={returnView} 
+                  addAdjustmentField={setAdjustments}
+                  adjustmentFields={adjustments}
+                  renderScreen={renderAdjustmentList}
+                />
               </ScrollView>
             </View>
 

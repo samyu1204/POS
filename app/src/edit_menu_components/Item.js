@@ -8,10 +8,6 @@ function Item(props) {
     <View style={styles.background}>
         <Text style={{ fontSize: 25 }}> {props.itemName} </Text>
         <Text style={{ color: 'white', left: '2%', fontSize: 20 }}> Base Price: {props.itemAdjustObject['basePrice']}</Text>
-        {/* Components to view the addons: */}
-        {/* <Button title="Click" onPress={() => console.log(adjustmentObj)} /> */}
-        
-        {/* This will display all adjustments: */}
         <AdjustmentDisplay adjustments={adjustmentObj} />
     </View>
     

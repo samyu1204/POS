@@ -6,6 +6,7 @@ function AdjustmentComponent(props) {
     const [adjElement, setAdjElement] = useState();
 
     const renderElements = () => {
+        // name - name of item in questions
         setAdjElement(Object.keys(props.adjustmentDetails).map(name => <AdjustmentElement key={name} name={name} price={props.adjustmentDetails[name]} />));
       }
       useEffect(() => {
