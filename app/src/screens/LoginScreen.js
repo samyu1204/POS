@@ -16,7 +16,7 @@ import { authentication } from "../database/firebase-config.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import global from "../global_information/global.js";
 import { ScrollView } from "react-native-gesture-handler";
-import { setGlobalMenuList, mapGlobalMenu } from "../database/firebase-utility.js";
+import { getMenuListFromFirebase, mapGlobalMenu } from "../database/firebase-utility.js";
 
 function RegisterScreen() {
   const navigation = useNavigation();
@@ -26,11 +26,13 @@ function RegisterScreen() {
     return reg.test(text);
   };
 
-  const signUserIn = (email, password) => {
-    signInWithEmailAndPassword(authentication, email, password)
+  const signUserIn = async (email, password) => {
+    const lowerCaseEmail = email.toLowerCase();
+    const tmp = await getMenuListFromFirebase().then((data) => { return data; });
+    signInWithEmailAndPassword(authentication, lowerCaseEmail, password)
     .then((re) => {
-      global.session_user = email;
-      setGlobalMenuList();
+      global.session_user = lowerCaseEmail;
+      global.menu_list = tmp;
       navigation.navigate('Start');
     })
     .catch((err) => {

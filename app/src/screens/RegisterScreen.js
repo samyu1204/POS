@@ -27,7 +27,7 @@ function RegisterScreen() {
     createUserWithEmailAndPassword(authentication, email, password)
     .then((re) => {
       global.session_user = email;
-      addUser(email);
+      addUser(email.toLowerCase());
       navigation.navigate('Start');
     })
     .catch((re) => {

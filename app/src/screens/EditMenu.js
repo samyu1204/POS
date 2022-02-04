@@ -30,7 +30,7 @@ function EditMenu({ navigation }) {
         setNewMenuName('');
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         // Focus screen then do something:
         navigation.addListener('focus', () => {
             renderMenuBars()
