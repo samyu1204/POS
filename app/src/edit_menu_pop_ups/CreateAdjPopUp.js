@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { Alert, Modal, StyleSheet, Text, Pressable, View, Button, TouchableOpacity, Dimensions } from "react-native";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
+import { Alert, Modal, StyleSheet, Text, Pressable, View, Button, TouchableOpacity, Dimensions, ScrollView, TextInput } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Triangle } from "./Triangle";
 import { AdjElementField } from "./AdjElementField";
 
 // This is the pop up for adding new adjustment factors onto a menu item:
@@ -71,7 +69,6 @@ export const CreateAdjPopUp = (props) => {
         <View style={styles.centeredView}>
           {/* Modal view: */}
           <View style={styles.modalView}>
-            <Triangle />
             <Text style={{
               fontSize: 30,
               color: '#81C784',

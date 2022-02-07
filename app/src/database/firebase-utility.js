@@ -25,7 +25,7 @@ export const getMenuListFromFirebase = async () => {
     // const docSnap = await getDoc(menuRef);
     // console.log(docSnap.data())
     // global.menu_list = docSnap.data()['menu_list'];
-    const menuRef = doc(db, 'c@gmail.com', 'user_info');
+    const menuRef = doc(db, global.menu_list, 'user_info');
     const docSnap = await getDoc(menuRef);
     return docSnap.data()['menu_list'];
 }
@@ -33,7 +33,7 @@ export const getMenuListFromFirebase = async () => {
 // ======================================================================================
 // Removing Menu:
 export const removeMenu = async(menuName) => {
-    // Delete recorded name in user info of the menu:
+    // Delete global reference to the menu:
     await updateDoc(doc(db, global.session_user, 'user_info'), {
         menu_list: arrayRemove(menuName)
     });
@@ -49,16 +49,11 @@ export const removeMenu = async(menuName) => {
     }
 }
 
-// ======================================================================================
-// Functions relation to adding to menu:
+// =============================================================================================================================
+// =================================== Functions relation to adding elements to the menu =======================================
+// =============================================================================================================================
 
-// Adding a new menu name to the info list:
-export const addMenuNameToList = async (menuName) => {
-    await updateDoc(doc(db, global.session_user, 'user_info'), {
-        menu_list: arrayUnion(menuName)
-    });
-}
-
+// Adding a menu to the firebase as well as the global menu reference:
 export const addMenu = async (menuName) => {
     // Create a menu_info doc along with the actual menu collection:
     await setDoc(doc(db, global.session_user, 'menus', menuName, 'menu_info'), {});
@@ -68,13 +63,19 @@ export const addMenu = async (menuName) => {
     });
 }
 
+// Adding menu category to a menu:
+export const addCategory = async(menuName, categoryName) => {
+    await setDoc(doc(db, global.session_user, 'menus', menuName, categoryName), {});
+}
+
+
 /**
  * Function requires:
  *  - Item Name -> passed in as string
  *  - Base Price -> passed in as number 
  *  - Addons -> object
  */
-export const addMenuItem = async(category, itemName, basePrice, adjustment) => {
+export const addMenuItem = async(menu, category, itemName, basePrice, adjustment) => {
     // Create the menu item object
     let itemObj = {};
     itemObj[itemName] = {
@@ -83,43 +84,116 @@ export const addMenuItem = async(category, itemName, basePrice, adjustment) => {
     }
 
     // Update so it wont remove existing data:
-    await updateDoc(doc(db, global.session_user, 'menus', 'lunch', category), itemObj);
+    await updateDoc(doc(db, global.session_user, 'menus', menu, category), itemObj);
+}
+
+// ======================================================================================
+
+
+// =============================================================================================================================
+//           =================================== Adjustment Field Utility =======================================
+// =============================================================================================================================
+
+
+/**
+ * Add a new adjustment
+ * @param {} info object:
+ * @param {*} adjName 
+ */
+export const addNewAdjustmentField = async(menuName, itemName, category, adjName) => {
+    // Address to update:
+    const updateString = itemName + '.' + 'adjustment' + '.' + String(adjName).toLowerCase();
+    const updateObj = {}
+    updateObj[updateString] = {};
+
+    // Update firebase data:
+    await updateDoc(doc(db, global.session_user, 'menus', menuName, category), updateObj);
+
+    // Add it to global menu data:
+    const menuItem = global.menuMap.get(menuName)[category][itemName];
+    menuItem['adjustment'][adjName] = {};
+}
+
+/**
+ * Adding new element adjustments to an adjustment field:
+ * @param {*} menuName 
+ * @param {*} itemName 
+ * @param {*} category 
+ * @param {*} adjName 
+ * @param { name: name, cost: cost } newObj 
+ */
+export const addNewAdjustmentElement = async(menuName, itemName, category, adjName, newObj) => {
+    // console.log(menuName)
+    // console.log(itemName)
+    // console.log(category)
+    // console.log(adjName)
+    // console.log(newObj)
+
+    const elementName = String(newObj['name']).toLowerCase();
+    const elementCost = Number(newObj['cost']);
+    // Address to update:
+    const updateString = itemName + '.' + 'adjustment' + '.' + String(adjName).toLowerCase();
+    const updateObj = {}
+    const temp = {}
+    temp[elementName] = elementCost;
+    updateObj[updateString] = temp;
+
+    // Update firebase data:
+    await updateDoc(doc(db, global.session_user, 'menus', menuName, category), updateObj);
+
+    // Add it to global menu data:
+    const menuItem = global.menuMap.get(menuName)[category][itemName];
+    menuItem['adjustment'][adjName][elementName] = elementCost;
 }
 
 
 // ======================================================================================
 // Menu Mapping
 
-/**
- * Very bad design:
- *  - Fetching menu list again
- *  - Using global variables
- */
-export const getMenuMap = async(menuName) => {
-    const menuSnap = await getDocs(collection(db, global.session_user, 'menus', menuName));
-    const menu_id = menuSnap.docs.map(doc => doc.id)
-    const menu = menuSnap.docs.map(doc => doc.data());
+// Set global menu: - used for updating the global map
+export const mapMenusToGlobal = async () => {
+    const menuRef = doc(db, global.session_user, 'user_info');
+    const docSnap = await getDoc(menuRef);
+    const menuList = docSnap.data()['menu_list'];
+    
+    const menuMap = new Map();
+    for (const menu of menuList) {
+        const menuReference = await getDocs(collection(db, global.session_user, 'menus', menu));
+        const menuCategory = menuReference.docs.map(doc => doc.id)
+        const menuData = menuReference.docs.map(doc => doc.data());
+
+        let categoriesObj = {}
+        for (let i = 0; i < menuCategory.length; i++) {
+            categoriesObj[menuCategory[i]] = menuData[i]
+        }
+        menuMap.set(menu, categoriesObj);
+    }
+
+    // Set it to global data:
+    global.menuMap = menuMap;
+}
+
+// First mapping of menu
+export const mapGlobalMenuOnSignIn = async (email) => {
+    const menuRef = doc(db, email, 'user_info');
+    const docSnap = await getDoc(menuRef);
+    const menuList = docSnap.data()['menu_list'];
 
     const menuMap = new Map();
+    for (const menu of menuList) {
+        const menuReference = await getDocs(collection(db, email, 'menus', menu));
+        const menuCategory = menuReference.docs.map(doc => doc.id)
+        const menuData = menuReference.docs.map(doc => doc.data());
 
-    for (let i = 0; i < menu.length; i++) {
-        menuMap.set(menu_id[i], menu[i])
-    }
-    // Map the menu name to the menu map:
-    return menuMap;
-}
-
-// ======================================================================================
-// Getting Menu Information:
-export const getMenuCategoryId = async(menuName) => {
-    const menuRef = await getDocs(collection(db, global.session_user, 'menus', menuName));
-    const menu_id = menuRef.docs.map(doc => doc.id);
-
-    for( let i = 0; i < menu_id.length; i++){                            
-        if ( menu_id[i] === 'menu_info') { 
-            menu_id.splice(i, 1); 
+        let categoriesObj = {}
+        for (let i = 0; i < menuCategory.length; i++) {
+            categoriesObj[menuCategory[i]] = menuData[i]
         }
+        menuMap.set(menu, categoriesObj);
     }
-    
-    return menu_id;
+
+    // Set it to global data:
+    global.menuMap = menuMap;
 }
+
+

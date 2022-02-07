@@ -12,7 +12,6 @@ function EditMenu({ navigation }) {
     // setter function rerenders the screen!
     const [menuBarComponents, setMenuBarComponents] = useState([]);
     const [newMenuName, setNewMenuName] = useState();
-    
 
     const renderMenuBars = () => {
         setMenuBarComponents(menuList.map(name => <MenuBar menuName={name} key={name} />));

@@ -4,6 +4,8 @@ import { ImageBackground, StyleSheet, View, Text, Button } from "react-native";
 import { Logo } from "../utility/Logo.js";
 import { LButton } from "../utility/LButton.js";
 import { setGlobalMenuList } from "../database/firebase-utility.js";
+import { LogBox } from "react-native";
+
 function HomeScreen() {
   // Hook function:
   const navigation = useNavigation();

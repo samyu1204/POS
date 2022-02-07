@@ -9,9 +9,10 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/vector-icons": "^12.0.5",
     "@firebase/app": "^0.7.11",
     "@fortawesome/react-fontawesome": "^0.1.17",
-    "@react-native-async-storage/async-storage": "^1.15.14",
+    "@react-native-async-storage/async-storage": "~1.15.0",
     "@react-native-firebase/app": "^14.1.0",
     "@react-native-firebase/database": "^14.1.0",
     "@react-native-firebase/firestore": "^14.1.0",
@@ -29,6 +30,8 @@
     "firebase-admin": "^10.0.1",
     "firebaseui": "^6.0.0",
     "formik": "^2.2.9",
+    "material-icons": "^1.10.6",
+    "rc-swipeout": "^2.0.11",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
@@ -42,10 +45,13 @@
     "react-native-navigation-container": "^1.0.6",
     "react-native-popup-menu": "^0.15.12",
     "react-native-reanimated": "^2.3.1",
+    "react-native-shape": "^1.1.2",
+    "react-native-swipe-list-view": "^3.2.9",
     "react-native-textinput-effects": "^0.6.2",
     "react-native-vector-icons": "^9.0.0",
     "react-native-web": "0.17.1",
     "realm": "^10.11.0",
+    "typed-async-storage": "^3.1.2",
     "write-json-file": "^5.0.0"
   },
   "devDependencies": {
