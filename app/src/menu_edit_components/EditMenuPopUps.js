@@ -185,7 +185,12 @@ export const AddAdjustmentPopUp = (props) => {
                   props.addToAdjView((prev) => [...prev, <AdjustmentDisplay 
                                                             key={adjName} 
                                                             adjustmentName={adjName} 
-                                                            adjustmentFields={{}} />])
+                                                            adjustmentFields={{}} 
+                                                            itemName={props.itemName}
+                                                            category={props.category}
+                                                            menuName={props.menuName}
+
+                                                          />])
                   setModalVisible(!modalVisible);
                 } else {
                   alert('Something went wrong!')
