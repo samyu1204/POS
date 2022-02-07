@@ -5,7 +5,12 @@ import Item from "./Item";
 function MenuCategoryDisplay(props) {
   // Have a component that handles each category of menu
   // Read from the map of categories then add it to a useState
-  const [catItems, setCatItems] = useState();
+  const firstRender = () => {
+    const categoryMap = props.categoryObject;
+    return Object.keys(categoryMap).map(name => <Item key={name} itemName={name} itemAdjustObject={categoryMap[name]} />)
+  }
+
+  const [catItems, setCatItems] = useState(firstRender());
   const categoryMap = props.categoryObject;
 
   const renderCategoryItems = () => {
@@ -26,9 +31,8 @@ function MenuCategoryDisplay(props) {
         <View style={{ marginLeft: '7%' }}>
           {catItems}
         </View>
-
+        
     </View>
-    
   );
 }
 

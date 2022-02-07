@@ -1,19 +1,13 @@
 import React, {useState, useEffect} from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import AdjustmentComponent from "./AdjustmentComponent";
 
 function AdjustmentDisplay(props) {
-  const [adjustments, setAdjustments] = useState();
-
-  const renderAdjustments = () => {
-    setAdjustments(Object.keys(props.adjustments).map(name => 
-      <AdjustmentComponent key={name} name={name} adjustmentDetails={props.adjustments[name]} 
-    />));
+  const renderFunc = () => {
+    return Object.keys(props.adjustments).map(name => <AdjustmentComponent key={name} name={name} adjustmentDetails={props.adjustments[name]} />)
   }
 
-  useEffect(() => {
-    renderAdjustments()
-  }, [])
+  const [adjustments, setAdjustments] = useState(renderFunc());
 
   return (
     <View style={styles.background}>

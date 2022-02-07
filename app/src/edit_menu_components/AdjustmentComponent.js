@@ -3,15 +3,10 @@ import { View, Text, StyleSheet, Button } from "react-native";
 import AdjustmentElement from "./AdjustmentElement";
 
 function AdjustmentComponent(props) {
-    const [adjElement, setAdjElement] = useState();
-
-    const renderElements = () => {
-        // name - name of item in questions
-        setAdjElement(Object.keys(props.adjustmentDetails).map(name => <AdjustmentElement key={name} name={name} price={props.adjustmentDetails[name]} />));
-      }
-      useEffect(() => {
-        renderElements()
-      }, [])
+    const renderFunc = () => {
+        return Object.keys(props.adjustmentDetails).map(name => <AdjustmentElement key={name} name={name} price={props.adjustmentDetails[name]} />);
+    }
+    const [adjElement, setAdjElement] = useState(renderFunc());
 
     return (
         <View style={styles.background}>

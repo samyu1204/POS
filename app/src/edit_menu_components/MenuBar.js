@@ -12,7 +12,7 @@ export const MenuBar = (props) => {
         <Text style={styles.menuName}> {props.menuName} </Text>
         <Text style={styles.menuCategories}> Menu Categories: 1 </Text>
         <Text style={styles.menuItems}> Menu Items: 1 </Text>
-        <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate("CustomiseMenu", props.menuName)} >
+        <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate("DisplayMenuScreen", props.menuName)} >
           <Ionicons name="pencil" size={22} />
         </TouchableOpacity>
     </View>

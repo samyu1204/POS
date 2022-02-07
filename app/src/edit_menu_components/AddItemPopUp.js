@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, Modal, StyleSheet, Text, Pressable, View, Button, TouchableOpacity, Animated, Dimensions, KeyboardAvoidingView } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { getMenuCategoryId } from "../database/firebase-utility";
+import { getMenuCategoryId } from "../database/menu-data-utility";
 import DropDownPicker from "react-native-dropdown-picker";
 import { CreateAdjPopUp } from "../edit_menu_pop_ups/CreateAdjPopUp";
 import AdjustmentComponent from "./AdjustmentComponent";
@@ -10,30 +10,22 @@ import { addMenuItem } from "../database/firebase-utility";
 
 const AddItemPopUp = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [itemObj, setItemObj] = useState({});
-
   // New menu information:
-  const [itemName, setItemName] = useState('');
-  const [basePrice, setBasePrice] = useState();
-  
+  const [itemName, setItemName] = useState(null);
+  const [basePrice, setBasePrice] = useState(null);
+
   // This stores array of objects that has key to value
   const [adjustments, setAdjustments] = useState([]);
 
   // Adjustment list view:
   const [adjView, setAdjView] = useState(null);
 
-  // Sets the drop down list names from firebase:
-  const setCategories = async () => {
-    let catArray = await getMenuCategoryId(props.menuName).then((data) => { return data; });
-    const tmpArray = []
-    for (let i = 0; i < catArray.length; i++) {
-      const obj = {};
-      obj['label'] = catArray[i];
-      obj['value'] = catArray[i];
-      tmpArray.push(obj);
-    }
-    setItems(tmpArray);
-  }
+  /**
+   * Drop down states:
+   */
+   const [open, setOpen] = useState(false);
+   const [value, setValue] = useState(null);
+   const [items, setItems] = useState([]);
 
   const renderAdjustmentList = () => {
     const tmp = {};
@@ -69,14 +61,37 @@ const AddItemPopUp = (props) => {
       }).start()
   }
 
-  /**
-   * Drop down states:
-   *  - open -> open and close dropdown
-   *  - 
-   */
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState([]);
+  // Checks if the item can be added:
+  const addItemConfirmation = () => {
+    const tmp = {};
+    for (let i = 0; i < adjustments.length; i++) {
+      for (const [key, value] of Object.entries(adjustments[i])) {
+        tmp[key] = value;
+      }
+    }
+    // console.log(basePrice)
+    if (value !== null && itemName !== null && basePrice !== null) {
+      addMenuItem(props.menuName, value, itemName, basePrice, tmp);
+      setModalVisible(false);
+      props.renderMenuItems();
+      console.log('hi')
+    } else {
+      alert('Something went wrong!')
+    }
+  }
+
+  // Sets the drop down list names from firebase:
+  const setCategories = () => {
+    let catArray = getMenuCategoryId(props.menuName);
+    const tmpArray = []
+    for (let i = 0; i < catArray.length; i++) {
+      const obj = {};
+      obj['label'] = catArray[i];
+      obj['value'] = catArray[i];
+      tmpArray.push(obj);
+    }
+    setItems(tmpArray);
+  }
 
   useEffect(() => {
     setCategories()
@@ -190,15 +205,8 @@ const AddItemPopUp = (props) => {
                 bottom: 0,
                 marginBottom: '1%'
               }}
-              onPress={() => {
-                const tmp = {};
-                for (let i = 0; i < adjustments.length; i++) {
-                  for (const [key, value] of Object.entries(adjustments[i])) {
-                    tmp[key] = value;
-                  }
-                }
-                addMenuItem(value, itemName, basePrice, tmp);
-              }}
+
+              onPress={() => addItemConfirmation()}
             >
               <Text style={{fontSize: 20, fontWeight: 'bold'}}>Confirm</Text>
             </TouchableOpacity>
@@ -268,9 +276,9 @@ const styles = StyleSheet.create({
   cancelButton: {
     color: 'red', 
     position: 'absolute',
-     alignSelf: 'flex-end', 
-     marginRight: '5%', 
-     marginTop: '3%'
+    alignSelf: 'flex-end', 
+    marginRight: '5%', 
+    marginTop: '3%'
   },
   nameInput: {
     fontSize: 25,
