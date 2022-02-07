@@ -123,20 +123,12 @@ export const addNewAdjustmentField = async(menuName, itemName, category, adjName
  * @param { name: name, cost: cost } newObj 
  */
 export const addNewAdjustmentElement = async(menuName, itemName, category, adjName, newObj) => {
-    // console.log(menuName)
-    // console.log(itemName)
-    // console.log(category)
-    // console.log(adjName)
-    // console.log(newObj)
-
     const elementName = String(newObj['name']).toLowerCase();
     const elementCost = Number(newObj['cost']);
     // Address to update:
-    const updateString = itemName + '.' + 'adjustment' + '.' + String(adjName).toLowerCase();
+    const updateString = itemName + '.' + 'adjustment' + '.' + String(adjName).toLowerCase() + '.' + elementName;
     const updateObj = {}
-    const temp = {}
-    temp[elementName] = elementCost;
-    updateObj[updateString] = temp;
+    updateObj[updateString] = elementCost;
 
     // Update firebase data:
     await updateDoc(doc(db, global.session_user, 'menus', menuName, category), updateObj);
