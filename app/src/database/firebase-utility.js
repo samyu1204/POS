@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, setDoc, updateDoc, arrayUnion, getDoc, arrayRemove, deleteDoc } from 'firebase/firestore/lite';
+import { collection, getDocs, doc, setDoc, updateDoc, arrayUnion, getDoc, arrayRemove, deleteDoc, FieldValue, deleteField } from 'firebase/firestore/lite';
 import { db } from '../database/firebase-config';
 import global from '../global_information/global';
 
@@ -94,7 +94,6 @@ export const addMenuItem = async(menu, category, itemName, basePrice, adjustment
 //           =================================== Adjustment Field Utility =======================================
 // =============================================================================================================================
 
-
 /**
  * Add a new adjustment
  * @param {} info object:
@@ -110,8 +109,8 @@ export const addNewAdjustmentField = async(menuName, itemName, category, adjName
     await updateDoc(doc(db, global.session_user, 'menus', menuName, category), updateObj);
 
     // Add it to global menu data:
-    const menuItem = global.menuMap.get(menuName)[category][itemName];
-    menuItem['adjustment'][adjName] = {};
+    // const menuItem = global.menuMap.get(menuName)[category][itemName];
+    // menuItem['adjustment'][adjName.toLowerCase()] = {hello: 1};
 }
 
 /**
@@ -138,6 +137,30 @@ export const addNewAdjustmentElement = async(menuName, itemName, category, adjNa
     menuItem['adjustment'][adjName][elementName] = elementCost;
 }
 
+export const editAdjustmentElement = async(menuName, itemName, category, adjField, adjName, newObj) => {
+    const elementName = String(newObj['name']).toLowerCase();
+    const elementCost = Number(newObj['cost']);
+    const currentAdj = global.menuMap.get(menuName)[category][itemName]['adjustment'];
+    const tmp = currentAdj[adjField.toLowerCase()];
+    delete tmp[adjName.toLowerCase()];
+    currentAdj[adjField.toLowerCase()][elementName] = elementCost;
+
+    // Address
+    const toDelete = itemName + '.' + 'adjustment' + '.' + adjField.toLowerCase() + '.' + adjName.toLowerCase();
+    // Address to update:
+    const deleteObj = {};
+    deleteObj[toDelete] = deleteField();
+    //Delete the original field
+    await updateDoc(doc(db, global.session_user, 'menus', menuName, category), deleteObj);
+
+    // Add the updated adjustment in:
+    const toAdd = itemName + '.' + 'adjustment' + '.' + adjField.toLowerCase() + '.' + elementName;
+    // Address to update:
+    const addObj = {};
+    addObj[toAdd] = elementCost;
+    //Delete the original field
+    await updateDoc(doc(db, global.session_user, 'menus', menuName, category), addObj);
+}
 
 // ======================================================================================
 // Menu Mapping

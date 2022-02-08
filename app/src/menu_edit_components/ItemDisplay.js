@@ -1,27 +1,33 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useLayoutEffect} from "react";
 import { View, Text, StyleSheet, Button, TouchableOpacity, ScrollView } from "react-native";
 import { editMenuStyles } from "../styles/EditMenuStyleSheet";
 import AdjustmentDisplay from "./AdjustmentDisplay";
 import { AddAdjustmentPopUp } from "./EditMenuPopUps";
+import { getItemData } from "../database/menu-data-utility";
 
 function ItemDisplay(props) {
-  // This renders all adjustments
-  const renderFunc = () => {
-    if (props.adjustmentObject === null) return null;
-    return Object.keys(props.adjustmentObject).map(name =>
-      <AdjustmentDisplay 
-        key={name} 
-        adjustmentName={name} 
-        adjustmentFields={props.adjustmentObject[name]}
-        itemName={props.itemName}
-        category={props.category}
-        menuName={props.menuName}
-      />
+  // Sets the adjustment views - showing all user's adjustments:
+  const [adjustmentView, setAdjustmentView] = useState(null);
+
+  const renderAdjustmentDisplay = () => {
+    const itemData = getItemData(props.menuName, props.category, props.itemName);
+    setAdjustmentView(
+      Object.keys(itemData['adjustment']).map(name =>
+        <AdjustmentDisplay 
+          key={name} 
+          adjustmentField={name} 
+          itemName={props.itemName}
+          category={props.category}
+          menuName={props.menuName}
+        />
+      )
     )
   }
-
-  // Sets the adjustment views - showing all user's adjustments:
-  const [adjustmentView, setAdjustmentView] = useState(renderFunc());
+  
+  useLayoutEffect(() => {
+    renderAdjustmentDisplay();
+    
+  }, [])
 
   return (
     <View style={styles.background}>

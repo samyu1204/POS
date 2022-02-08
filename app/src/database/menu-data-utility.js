@@ -24,6 +24,10 @@ export const getCategoryData = (menuName, categoryName) => {
   return global.menuMap.get(menuName)[categoryName];
 }
 
+export const getItemData = (menuName, categoryName, itemName) => {
+  return getCategoryData(menuName, categoryName)[itemName]
+}
+
 /**
  * Fetching all category ID from menu map:
  * @param {Name of menu} menuName 
