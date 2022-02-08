@@ -5,9 +5,11 @@ import {
   TouchableOpacity, 
   Platform, 
   Dimensions,
+  Button
 } from "react-native";
 import { editMenuStyles } from "../styles/EditMenuStyleSheet";
 import { Triangle } from "../styles/Shapes";
+import { EditElementPopUp } from "./EditMenuPopUps";
 
 // =============================================================================================================================
 //          =================================== Category Selection Buttons =======================================
@@ -49,30 +51,6 @@ export function CategoryDisplaySelected(props) {
         <Text style={editMenuStyles.categoryButtonText}>
           {props.categoryName}
         </Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
-
-// =============================================================================================================================
-//              =================================== Adjustment Element =======================================
-// =============================================================================================================================
-export function AdjustmentDisplayElement(props) {
-  return(
-    <View style={{
-      justifyContent: 'center',
-      marginLeft: Dimensions.get('screen').width/80,
-      marginRight: Dimensions.get('screen').width/11
-      }}>
-      <TouchableOpacity style={editMenuStyles.adjustmentElement}>
-        <View style={{ flexDirection: 'column' }}>
-          <Text style={editMenuStyles.adjustmentElementText}>
-            {props.adjustmentName}
-          </Text>
-          <Text style={editMenuStyles.adjustmentElementCost}>
-            + {Number(props.adjustmentCost).toFixed(2)}
-          </Text>
-        </View>
       </TouchableOpacity>
     </View>
   );

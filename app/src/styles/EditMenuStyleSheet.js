@@ -68,7 +68,9 @@ export const editMenuStyles = StyleSheet.create({
     borderRadius: 15,
     position: 'absolute',
     width: 110,
-    height: 80
+    height: 80,
+    position: 'absolute',
+    right: -75
   }, 
   adjustmentElementText: {
     alignSelf: 'center',
@@ -131,7 +133,7 @@ export const modalStyles = StyleSheet.create({
     backgroundColor: "#C8E6C9",
   },
   buttonClose: {
-    backgroundColor: "#C8E6C9",
+    backgroundColor: "#EFDD49",
     position: 'absolute',
     width: '20%',
     bottom: Dimensions.get('screen').height/50,

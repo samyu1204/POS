@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useLayoutEffect} from "react";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { editMenuStyles } from "../styles/EditMenuStyleSheet";
-import { AdjustmentDisplayElement } from "./EditMenuComponents";
-import { AddAdjustmentElementPopUp } from "./EditMenuPopUps.js" 
+import { AddAdjustmentElementPopUp,EditElementPopUp  } from "./EditMenuPopUps.js" 
+import { getItemData } from "../database/menu-data-utility";
+import global from "../global_information/global";
 
 // This displays the extra's prices and names in a scroll view manner:
 
@@ -11,20 +12,33 @@ import { AddAdjustmentElementPopUp } from "./EditMenuPopUps.js"
 // a normal adjustment field:
 
 function AdjustmentDisplay(props) {
-  // Render function:
-  const renderFunc = () => {
-    return Object.keys(props.adjustmentFields).map(name =>
-     <AdjustmentDisplayElement 
-        key={name} 
-        adjustmentName={name} 
-        adjustmentCost={props.adjustmentFields[name]}
-      />
+  // Sets the adjustment views - showing all user's adjustments:
+  // Adjustment state:
+  const [adjustmentElements, setAdjustmentElements] = useState(null);
+
+  const renderAdjustmentElement = () => {
+    const itemData = getItemData(props.menuName, props.category, props.itemName);
+    const adjustmentArray = itemData['adjustment'];
+    setAdjustmentElements(
+      Object.keys(adjustmentArray[props.adjustmentField]).map(name =>
+        <EditElementPopUp 
+          key={name} 
+          adjField={props.adjustmentField}
+          adjName={name} 
+          adjCost={adjustmentArray[props.adjustmentField][name]}
+          itemName={props.itemName}
+          category={props.category}
+          menuName={props.menuName}
+          updateScreen={setAdjustmentElements}
+        />
+      )
     )
   }
 
-  // Sets the adjustment views - showing all user's adjustments:
-  // Adjustment state:
-  const [adjustmentElements, setAdjustmentElements] = useState(renderFunc());
+  useLayoutEffect(() => {
+    renderAdjustmentElement();
+  }, [])
+
 
   return (
     <View style={styles.background}>
@@ -37,10 +51,10 @@ function AdjustmentDisplay(props) {
             fontSize: 23,
             fontWeight: 'bold'
           }}>
-            {props.adjustmentName}
+            {props.adjustmentField}
           </Text>
       </TouchableOpacity>
-
+      
       {/* Scroll view for adjustments: */}
       <View style={{
         justifyContent: 'center',
@@ -55,18 +69,19 @@ function AdjustmentDisplay(props) {
             alignSelf: 'center',
             backgroundColor: '#E6F3E6',
             width: '65%',
-            right: '50%',
+            right: '45%',
           }}
         >
           {adjustmentElements}
+
         </ScrollView>
         {/* Add element button: */}
         <AddAdjustmentElementPopUp
           itemName={props.itemName}
           category={props.category}
           menuName={props.menuName}
-          adjName={props.adjustmentName}
-          addElementToView={setAdjustmentElements}
+          adjField={props.adjustmentField}
+          updateScreen={setAdjustmentElements}
         />
       </View>
 
