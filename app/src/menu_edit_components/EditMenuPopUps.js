@@ -13,7 +13,9 @@ import { Kohana } from "react-native-textinput-effects";
 import { 
   addNewAdjustmentElement, 
   addNewAdjustmentField,
-  editAdjustmentElement
+  editAdjustmentElement,
+  deleteAdjustmentElement,
+  editAdjustmentField
 } from "../database/firebase-utility";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import AdjustmentDisplay from "./AdjustmentDisplay";
@@ -122,7 +124,8 @@ export const EditElementPopUp = (props) => {
               <Text style={modalStyles.textStyle}>Apply</Text>
             </Pressable>
             
-            <View style={{
+            <View 
+            style={{
               position: 'absolute',
               backgroundColor: '#F8474A',
               borderRadius: 10,
@@ -134,6 +137,25 @@ export const EditElementPopUp = (props) => {
                 name='trash'
                 size={30}
                 color='white'
+                onPress={() => {
+                  deleteAdjustmentElement(props.menuName, props.itemName, props.category, props.adjField, props.adjName)
+                  // Updating screen:
+                  const itemData = getItemData(props.menuName, props.category, props.itemName);
+                  const adjustmentArray = itemData['adjustment'][props.adjField];
+                  props.updateScreen(() => {
+                    return Object.keys(adjustmentArray).map(name =>
+                      <EditElementPopUp 
+                        key={name} 
+                        adjField={props.adjField}
+                        adjName={name} 
+                        adjCost={adjustmentArray[name]}
+                        itemName={props.itemName}
+                        category={props.category}
+                        menuName={props.menuName}
+                        updateScreen={props.updateScreen}
+                      />)
+                  });
+                }}
                 />
             </View>
 
@@ -177,6 +199,130 @@ export const EditElementPopUp = (props) => {
     </View>
   );
 };
+
+// For editing adjustment fields:
+export const EditAdjustmentFieldPopUp = (props) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [name, setName] = useState(props.adjField)
+
+  return (
+    <View style={modalStyles.centeredView}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={modalStyles.centeredView}>
+          <View style={modalStyles.editAdjustmentFieldModalView}>
+            
+            <View style={{
+              bottom: '30%'
+            }}>
+              <Text style={modalStyles.modalText}>Edit Adjustment</Text>
+            </View>
+          
+            <Kohana
+                style={{ 
+                  backgroundColor: '#f9f5ed', 
+                  bottom: '10%',
+                  borderRadius: 15,
+                  marginRight: '2%'
+                }}
+                value={name}
+                iconClass={Ionicons}
+                iconName={'pencil'}
+                iconColor={'#f4d29a'}
+                inputPadding={16}
+                labelStyle={{ color: '#BEB38B' }}
+                inputStyle={{ color: '#BEB38B' }}
+                labelContainerStyle={{ padding: 2 }}
+                iconContainerStyle={{ padding: 16 }}
+                useNativeDriver
+                onChangeText={(text) => setName(text)}
+              />
+
+            <Pressable
+              style={[modalStyles.editAdjustmentFieldApplyButton]}
+              onPress={() => {
+                if (props.adjField !== name) {
+                  editAdjustmentField(props.menuName, props.itemName, props.category, props.adjField, name);
+                  // Rerender to apply update:
+                  const itemData = getItemData(props.menuName, props.category, props.itemName);
+                  props.updateAdjustmentDisplay(
+                    Object.keys(itemData['adjustment']).map(name =>
+                      <AdjustmentDisplay 
+                        key={name} 
+                        adjustmentField={name} 
+                        itemName={props.itemName}
+                        category={props.category}
+                        menuName={props.menuName}
+                        updateAdjustmentDisplay={props.updateAdjustmentDisplay}
+                      />
+                    )
+                  )
+                } else {
+                  alert('Something went wrong!')
+                }
+              }}
+            >
+              <Text style={modalStyles.textStyle}>Apply</Text>
+            </Pressable>
+            
+            <View 
+            style={{
+              position: 'absolute',
+              backgroundColor: '#F8474A',
+              borderRadius: 10,
+              bottom: '25%',
+              left: '15%',
+              padding: 3
+            }}>
+              <Ionicons 
+                name='trash'
+                size={30}
+                color='white'
+                onPress={() => console.log('hi')}
+                />
+            </View>
+
+            <Ionicons 
+              style={{
+                color: 'red', 
+                position: 'absolute',
+                alignSelf: 'flex-end', 
+                marginRight: '1%', 
+                marginTop: '1%'
+              }} 
+              name='close' 
+              size={40} 
+              onPress={() => {
+              setModalVisible(!modalVisible);
+            }} /> 
+          </View>
+        </View>
+      </Modal>
+
+      <Pressable
+        style={editMenuStyles.editAdjustmentNameBox}
+        onPress={() => setModalVisible(true)}
+        
+      >
+        <Text style={{
+          fontSize: 25,
+          alignSelf: 'center',
+          fontWeight: 'bold',
+        }}>
+          {props.adjField}
+        </Text>
+      </Pressable>
+
+    </View>
+  );
+}
 
 // Pop up to add an adjustment element:
 export const AddAdjustmentElementPopUp = (props) => {
@@ -250,7 +396,6 @@ export const AddAdjustmentElementPopUp = (props) => {
                 />
               
             </View>
-            <Button title="get" onPress={() => console.log(global.menuMap)} />
             <Pressable
               style={[modalStyles.button, modalStyles.buttonClose]}
               onPress={() => {
@@ -258,7 +403,6 @@ export const AddAdjustmentElementPopUp = (props) => {
                   const newObj = {name: name, cost: cost};
                   // Adjust firebase
                   addNewAdjustmentElement(props.menuName, props.itemName, props.category, props.adjField, newObj);
-                  console.log()
                   props.updateScreen((prev) => [...prev, <EditElementPopUp 
                                                       key={name} 
                                                       adjField={props.adjField}
