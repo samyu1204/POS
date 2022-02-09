@@ -96,7 +96,14 @@ export const editMenuStyles = StyleSheet.create({
     alignSelf: 'center',
     bottom: '14%',
     color: 'white'
-  }
+  },
+  editAdjustmentNameBox: {
+    marginTop: '2%',
+    backgroundColor: '#D6D6D7',
+    width: '80%',
+    paddingVertical: '0.5%',
+    borderRadius: 10,
+  },
 });
 
 export const modalStyles = StyleSheet.create({
@@ -177,4 +184,29 @@ export const modalStyles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5
   },
+  editAdjustmentFieldModalView: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 100,
+    paddingVertical: 80,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    position: 'absolute'
+  },
+  editAdjustmentFieldApplyButton: {
+    backgroundColor: '#EFDD49',
+    width: '70%',
+    alignSelf: 'center',
+    paddingVertical: '1%',
+    borderRadius: 10,
+    position: 'absolute',
+    bottom: '28%'
+  }
 })

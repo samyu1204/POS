@@ -74,7 +74,6 @@ const AddItemPopUp = (props) => {
       addMenuItem(props.menuName, value, itemName, basePrice, tmp);
       setModalVisible(false);
       props.renderMenuItems();
-      console.log('hi')
     } else {
       alert('Something went wrong!')
     }

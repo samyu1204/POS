@@ -2,7 +2,7 @@ import React, {useState, useEffect, useLayoutEffect} from "react";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { editMenuStyles } from "../styles/EditMenuStyleSheet";
-import { AddAdjustmentElementPopUp,EditElementPopUp  } from "./EditMenuPopUps.js" 
+import { AddAdjustmentElementPopUp,EditElementPopUp, EditAdjustmentFieldPopUp  } from "./EditMenuPopUps.js" 
 import { getItemData } from "../database/menu-data-utility";
 import global from "../global_information/global";
 
@@ -42,18 +42,13 @@ function AdjustmentDisplay(props) {
 
   return (
     <View style={styles.background}>
-      <TouchableOpacity 
-          style={editMenuStyles.adjustmentNameBox}
-          onPress={() => console.log('HELLO')}
-        >
-          <Text style={{
-            alignSelf: 'center',
-            fontSize: 23,
-            fontWeight: 'bold'
-          }}>
-            {props.adjustmentField}
-          </Text>
-      </TouchableOpacity>
+      <EditAdjustmentFieldPopUp 
+        adjField={props.adjustmentField}
+        menuName={props.menuName}
+        itemName={props.itemName}
+        category={props.category}
+        updateAdjustmentDisplay={props.updateAdjustmentDisplay}
+        />
       
       {/* Scroll view for adjustments: */}
       <View style={{

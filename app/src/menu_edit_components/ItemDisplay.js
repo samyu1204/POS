@@ -19,6 +19,7 @@ function ItemDisplay(props) {
           itemName={props.itemName}
           category={props.category}
           menuName={props.menuName}
+          updateAdjustmentDisplay={setAdjustmentView}
         />
       )
     )

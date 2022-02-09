@@ -137,6 +137,7 @@ export const addNewAdjustmentElement = async(menuName, itemName, category, adjNa
     menuItem['adjustment'][adjName][elementName] = elementCost;
 }
 
+// Edit the name and cost of elements of adjustments:
 export const editAdjustmentElement = async(menuName, itemName, category, adjField, adjName, newObj) => {
     const elementName = String(newObj['name']).toLowerCase();
     const elementCost = Number(newObj['cost']);
@@ -161,6 +162,61 @@ export const editAdjustmentElement = async(menuName, itemName, category, adjFiel
     //Delete the original field
     await updateDoc(doc(db, global.session_user, 'menus', menuName, category), addObj);
 }
+
+/**
+ * Function deletes a an adjustment element in the firebase:
+ * @param {*} menuName 
+ * @param {*} itemName 
+ * @param {*} category 
+ * @param {*} adjField 
+ * @param {*} adjName 
+ */
+export const deleteAdjustmentElement = async(menuName, itemName, category, adjField, adjName) => {
+    const currentAdj = global.menuMap.get(menuName)[category][itemName]['adjustment'];
+    const tmp = currentAdj[adjField.toLowerCase()];
+    // Delete the field name in the global map:
+    delete tmp[adjName.toLowerCase()];
+
+    // Address
+    const toDelete = itemName + '.' + 'adjustment' + '.' + adjField.toLowerCase() + '.' + adjName.toLowerCase();
+    // Address to update:
+    const deleteObj = {};
+    deleteObj[toDelete] = deleteField();
+    //Delete the original field
+    await updateDoc(doc(db, global.session_user, 'menus', menuName, category), deleteObj);
+}
+
+// Edit a fieldname in an adjustment
+export const editAdjustmentField = async(menuName, itemName, category, adjField, newFieldName) => {
+    const newName = newFieldName.toLowerCase();
+    // this will save the adjustment obj field
+    const adjObject = global.menuMap.get(menuName)[category][itemName]['adjustment'][adjField];
+    // Store the old information:
+    const tmpStore = { adj: adjObject }
+    // Update global base:
+    delete global.menuMap.get(menuName)[category][itemName]['adjustment'][adjField];
+    // Add the new field to global:
+    global.menuMap.get(menuName)[category][itemName]['adjustment'][newName] = tmpStore['adj'];
+
+    // Update firebase: Delete old and add new:
+
+    // Address
+    const toDelete = itemName + '.' + 'adjustment' + '.' + adjField;
+    // Address to update:
+    const deleteObj = {};
+    deleteObj[toDelete] = deleteField();
+    //Delete the original field
+    await updateDoc(doc(db, global.session_user, 'menus', menuName, category), deleteObj);
+
+    // Add the updated adjustment in:
+    const toAdd = itemName + '.' + 'adjustment' + '.' + newName;
+    // Address to update:
+    const addObj = {};
+    addObj[toAdd] = tmpStore['adj']
+    //Delete the original field
+    await updateDoc(doc(db, global.session_user, 'menus', menuName, category), addObj);
+}
+
 
 // ======================================================================================
 // Menu Mapping

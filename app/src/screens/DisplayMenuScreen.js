@@ -103,10 +103,7 @@ function DisplayMenuScreen({ route, navigation }) {
         <TouchableOpacity style={styles.deleteButton} onPress={() => showConfirmDialog()}>
           <Text style={{ fontSize: 30, color: 'white' }}>Delete Menu</Text> 
         </TouchableOpacity>
-
-        {/* <TouchableOpacity style={styles.addItemButton} onPress={() => console.log('Button')}>
-          <Text style={{ fontSize: 30, color: 'white' }}>Add Item</Text> 
-        </TouchableOpacity> */}
+        
         {/* Button for adding new item */}
         <AddItemPopUp menuName={route.params} renderMenuItems={renderCategoryDisplay} />
         {/* Button for adding new category */}
