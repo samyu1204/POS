@@ -9,6 +9,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import ItemDisplay from '../menu_edit_components/ItemDisplay';
 import { getCategoryData } from '../database/menu-data-utility';
 import global from "../global_information/global";
+import { AddMenuItemPopUp } from "../menu_edit_components/EditMenuPopUps";
 
 // Global state for the category that is currently selected:
 let currentCategory = null;
@@ -85,7 +86,18 @@ function EditMenuScreen({ route, navigation }) {
         bottom: Platform.OS === 'ios' ? '16%' : '10%',
         right: '8.5%',
       }}>
-        <Ionicons name="add-circle-outline" size={60} onPress={() => console.log(global.menuMap)} />
+        {/* Add menu item button: */}
+        <View style={{
+          right: Dimensions.get('screen').width/20,
+          height: Dimensions.get('screen').height/15
+        }}>
+          <AddMenuItemPopUp 
+            menuName={route.params.menuName}
+            category={currentCategory}
+            updateScreen={setItems}
+          />
+        </View>
+
       </View>
     </View>
   );

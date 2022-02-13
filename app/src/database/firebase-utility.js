@@ -75,13 +75,15 @@ export const addCategory = async(menuName, categoryName) => {
  *  - Base Price -> passed in as number 
  *  - Addons -> object
  */
-export const addMenuItem = async(menu, category, itemName, basePrice, adjustment) => {
+export const addMenuItem = async(menu, category, itemName, basePrice) => {
     // Create the menu item object
     let itemObj = {};
     itemObj[itemName] = {
         basePrice: basePrice,
-        adjustment: adjustment
+        adjustment: {}
     }
+    // Update global:
+    global.menuMap.get(menu)[category][itemName] = itemObj[itemName];
 
     // Update so it wont remove existing data:
     await updateDoc(doc(db, global.session_user, 'menus', menu, category), itemObj);
@@ -107,10 +109,6 @@ export const addNewAdjustmentField = async(menuName, itemName, category, adjName
 
     // Update firebase data:
     await updateDoc(doc(db, global.session_user, 'menus', menuName, category), updateObj);
-
-    // Add it to global menu data:
-    // const menuItem = global.menuMap.get(menuName)[category][itemName];
-    // menuItem['adjustment'][adjName.toLowerCase()] = {hello: 1};
 }
 
 /**
@@ -217,6 +215,19 @@ export const editAdjustmentField = async(menuName, itemName, category, adjField,
     await updateDoc(doc(db, global.session_user, 'menus', menuName, category), addObj);
 }
 
+// Delete an adjustment field:
+export const deleteAdjustmentField = async(menuName, itemName, category, adjField) => {
+    const currentAdj = global.menuMap.get(menuName)[category][itemName]['adjustment'];
+    // Delete the field name in the global map:
+    delete currentAdj[adjField];
+    // Address
+    const toDelete = itemName + '.' + 'adjustment' + '.' + adjField;
+    // Address to update:
+    const deleteObj = {};
+    deleteObj[toDelete] = deleteField();
+    //Delete the original field
+    await updateDoc(doc(db, global.session_user, 'menus', menuName, category), deleteObj);
+}
 
 // ======================================================================================
 // Menu Mapping
