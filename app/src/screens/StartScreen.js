@@ -7,6 +7,7 @@ import OrderHistory from './OrderHistoryScreen';
 import Analytics from './Analytics';
 import EditMenu from './EditMenu';
 import CustomDrawer from './CustomDrawer';
+import OrderScreen from './OrderScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -46,6 +47,11 @@ function StartScreen() {
               <Ionicons name='pencil-outline' size={22} color={color} />
             )
            }} />
+          <Drawer.Screen name="Ordering" component={OrderScreen} options={{ 
+            drawerIcon: ({ color }) => (
+              <Ionicons name='pencil-outline' size={22} color={color} />
+            )
+           }} />           
         </Drawer.Navigator>
     );
   }
