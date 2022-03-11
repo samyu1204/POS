@@ -9,8 +9,16 @@ import global from "../global_information/global";
  * @param {Name of menu} menuName 
  * @returns The entire menu map:
  */
- export const getMenuMap = (menuName) => {
+export const getMenuMap = (menuName) => {
   return global.menuMap.get(menuName);
+}
+
+export const getMenuList = () => {
+  const menuList = [];
+  for (const key in global.menu_info) {
+    menuList.push(global.menu_info[key]['name']);
+  }
+  return menuList;
 }
 
 /**

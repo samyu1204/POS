@@ -7,7 +7,8 @@ import {
   TouchableHighlight,
   Text,
   Image,
-  KeyboardAvoidingView 
+  KeyboardAvoidingView, 
+  Button
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
@@ -15,8 +16,8 @@ import { Logo } from "../utility/Logo.js";
 import { authentication } from "../database/firebase-config.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import global from "../global_information/global.js";
-import { ScrollView } from "react-native-gesture-handler";
 import { mapGlobalMenuOnSignIn } from "../database/firebase-utility.js";
+import { setGlobalUserData } from "../database/firebase-utility.js";
 
 function RegisterScreen() {
   const navigation = useNavigation();
@@ -27,12 +28,12 @@ function RegisterScreen() {
   };
 
   const signUserIn = async (email, password) => {
+    // Make sure the email is lowercase
     const lowerCaseEmail = email.toLowerCase();
-    await mapGlobalMenuOnSignIn(email);
     signInWithEmailAndPassword(authentication, lowerCaseEmail, password)
     .then((re) => {
       global.session_user = lowerCaseEmail;
-      global.menu_list = Array.from(global.menuMap.keys());
+      setGlobalUserData();
       navigation.navigate('Start');
     })
     .catch((err) => {
@@ -79,7 +80,7 @@ function RegisterScreen() {
 
         <View style={styles.enterForm}>
           <Formik
-            initialValues={{ email: "c@gmail.com", password: "111111" }}
+            initialValues={{ email: "s@gmail.com", password: "111111" }}
             onSubmit={(values, actions) => {
               // Valid email will allow user to proceed to
               // start screen.

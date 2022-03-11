@@ -11,10 +11,10 @@ export const addData = async () => {
 // ======================================================================================
 // User creation functions:
 export const addUser = async (email) => {
-    await setDoc(doc(db, email, 'user_info'), {
-        user_email: email,
-        menu_list: [],
-    })
+    await setDoc(doc(db, email, 'menu_info'), {})
+    await setDoc(doc(db, email, 'categories'), {})
+    await setDoc(doc(db, email, 'adjustments'), {})
+    await setDoc(doc(db, email, 'items'), {})
 }
 
 
@@ -28,6 +28,24 @@ export const getMenuListFromFirebase = async () => {
     const menuRef = doc(db, global.menu_list, 'user_info');
     const docSnap = await getDoc(menuRef);
     return docSnap.data()['menu_list'];
+}
+
+export const setGlobalUserData = async () => {
+    const menuInfoRef = doc(db, global.session_user, 'menu_info');
+    const menuSnap = await getDoc(menuInfoRef);
+    global.menu_info = menuSnap.data();
+
+    const categoriesInfoRef = doc(db, global.session_user, 'menu_info');
+    const categoriesSnap = await getDoc(categoriesInfoRef);
+    global.categories = categoriesSnap.data()
+
+    const itemsInfoRef = doc(db, global.session_user, 'menu_info');
+    const itemsSnap = await getDoc(itemsInfoRef);
+    global.items = itemsSnap.data();
+    
+    const adjustmentsInfoRef = doc(db, global.session_user, 'menu_info');
+    const adjustmentsSnap = await getDoc(adjustmentsInfoRef);
+    global.adjustments = adjustmentsSnap.data();
 }
 
 // ======================================================================================
@@ -55,19 +73,24 @@ export const removeMenu = async(menuName) => {
 
 // Adding a menu to the firebase as well as the global menu reference:
 export const addMenu = async (menuName) => {
+    const newMenu = {};
+    const menuId = 'menu_' + Date.now();
+    newMenu[menuId] = {
+        name: menuName,
+        pos: 0,
+    }
+
     // Create a menu_info doc along with the actual menu collection:
-    await setDoc(doc(db, global.session_user, 'menus', menuName, 'menu_info'), {});
-    // Add it to menu list:
-    await updateDoc(doc(db, global.session_user, 'user_info'), {
-        menu_list: arrayUnion(menuName)
-    });
+    await updateDoc(doc(db, global.session_user, 'menu_info'), newMenu);
+
+    // Update global data:
+    setGlobalUserData();
 }
 
 // Adding menu category to a menu:
 export const addCategory = async(menuName, categoryName) => {
     await setDoc(doc(db, global.session_user, 'menus', menuName, categoryName), {});
 }
-
 
 /**
  * Function requires:
@@ -214,6 +237,7 @@ export const editAdjustmentField = async(menuName, itemName, category, adjField,
     const addObj = {};
     addObj[toAdd] = tmpStore['adj']
     //Delete the original field
+    
     await updateDoc(doc(db, global.session_user, 'menus', menuName, category), addObj);
 }
 

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity, useIsFocused  } from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
-import { getMenuList, addMenu } from '../database/firebase-utility';
-import global, { menu_list } from '../global_information/global';
+import { addMenu } from '../database/firebase-utility';
 import { MenuBar } from '../edit_menu_components/MenuBar';
-import { EditMenuDropDown } from '../utility/EditMenuDropDown';
+import { getMenuList } from '../database/menu-data-utility';
+import global from "../global_information/global";
 
 function EditMenu({ navigation }) {
-    // Array of menu names for retrieveing purposes:
-    const menuList = global.menu_list;
+    const menuList = getMenuList();
+
     // setter function rerenders the screen!
     const [menuBarComponents, setMenuBarComponents] = useState([]);
     const [newMenuName, setNewMenuName] = useState();
@@ -24,9 +24,9 @@ function EditMenu({ navigation }) {
             return;
         }
         addMenu(newMenuName);
+        setNewMenuName('');
         menuList.push(newMenuName);
         renderMenuBars();
-        setNewMenuName('');
     }
 
     useEffect(() => {
@@ -35,6 +35,10 @@ function EditMenu({ navigation }) {
             renderMenuBars()
         });
     }, [navigation])
+
+    useLayoutEffect(() => {
+        renderMenuBars();
+    }, [])
 
     return(
         <View style={styles.background}>
