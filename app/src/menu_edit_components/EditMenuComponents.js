@@ -7,6 +7,7 @@ import {
   Dimensions,
   Button
 } from "react-native";
+import global from "../global_information/global";
 import { editMenuStyles } from "../styles/EditMenuStyleSheet";
 import { Triangle } from "../styles/Shapes";
 import { EditElementPopUp } from "./EditMenuPopUps";
@@ -25,7 +26,7 @@ export function CategoryDisplayUnselected(props) {
         
       >
         <Text style={editMenuStyles.categoryButtonText}>
-          {props.categoryName}
+          {global.categories[props.categoryName]['name']}
         </Text>
       </TouchableOpacity>
     </View>
@@ -49,7 +50,7 @@ export function CategoryDisplaySelected(props) {
           {<Triangle />}
         </View>
         <Text style={editMenuStyles.categoryButtonText}>
-          {props.categoryName}
+          {global.categories[props.categoryName]['name']}
         </Text>
       </TouchableOpacity>
     </View>

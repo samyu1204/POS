@@ -1,5 +1,8 @@
 import React from 'react';
 import {Animated, Button, Dimensions, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import global from '../global_information/global';
+import { getMenuList } from '../database/menu-data-utility';
+import { addMenu } from '../database/firebase-utility';
 
 function MenuScreen() {
     const ball = new Animated.ValueXY({x: 30, y: 30});
@@ -11,6 +14,7 @@ function MenuScreen() {
             useNativeDriver: false,
         }).start()
     }
+
     const moveBack = () => {
         Animated.timing(ball, {
             toValue: {x: 30, y: 30},
@@ -19,9 +23,9 @@ function MenuScreen() {
         }).start()
     }
 
-
     return (
         <View style={styles.container}>
+            <Button title='HELLO' onPress={() => console.log(global.adjustments)} />
             <Animated.View style={[styles.ball, ball.getLayout()]}>
                 <Text style={styles.text}>+</Text>
                 <Text style={styles.text}>HELLO</Text>

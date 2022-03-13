@@ -3,16 +3,22 @@ import { Image, ImageBackground, StyleSheet, View, Text, TouchableOpacity } from
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from "@react-navigation/native";
 
+import global from "../global_information/global";
+
 
 export const MenuBar = (props) => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.menuStyle}>
-        <Text style={styles.menuName}> {props.menuName} </Text>
+        <Text style={styles.menuName}> {global.menu_info[props.name]['name']} </Text>
         <Text style={styles.menuCategories}> Menu Categories: 1 </Text>
         <Text style={styles.menuItems}> Menu Items: 1 </Text>
-        <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate("DisplayMenuScreen", props.menuName)} >
+        <TouchableOpacity style={styles.editButton} onPress={() => {
+          navigation.navigate("EditMenuScreen")
+          // Set global focus menu:
+          global.focusedMenu = props.menuName;
+        }}>
           <Ionicons name="pencil" size={22} />
         </TouchableOpacity>
     </View>

@@ -8,8 +8,7 @@ import global from "../global_information/global";
 
 // This displays the extra's prices and names in a scroll view manner:
 
-// Props will take in the adjustment object and if it is null then just produce 
-// a normal adjustment field:
+// props.name -> adjustment id passed into this component:
 
 function AdjustmentDisplay(props) {
   // Sets the adjustment views - showing all user's adjustments:
@@ -17,18 +16,14 @@ function AdjustmentDisplay(props) {
   const [adjustmentElements, setAdjustmentElements] = useState(null);
 
   const renderAdjustmentElement = () => {
-    const itemData = getItemData(props.menuName, props.category, props.itemName);
-    const adjustmentArray = itemData['adjustment'];
+    const adjustmentIdList = Object.keys(global.adjustments[props.name]['factors']);
+    // Mapping a list of adjustment ids to components:
     setAdjustmentElements(
-      Object.keys(adjustmentArray[props.adjustmentField]).map(name =>
+      adjustmentIdList.map(name =>
         <EditElementPopUp 
           key={name} 
-          adjField={props.adjustmentField}
-          adjName={name} 
-          adjCost={adjustmentArray[props.adjustmentField][name]}
-          itemName={props.itemName}
-          category={props.category}
-          menuName={props.menuName}
+          name={name}
+          adjName={props.name}
           updateScreen={setAdjustmentElements}
         />
       )
@@ -43,10 +38,7 @@ function AdjustmentDisplay(props) {
   return (
     <View style={styles.background}>
       <EditAdjustmentFieldPopUp 
-        adjField={props.adjustmentField}
-        menuName={props.menuName}
-        itemName={props.itemName}
-        category={props.category}
+        name={props.name}
         updateAdjustmentDisplay={props.updateAdjustmentDisplay}
         />
       
@@ -72,10 +64,8 @@ function AdjustmentDisplay(props) {
         </ScrollView>
         {/* Add element button: */}
         <AddAdjustmentElementPopUp
-          itemName={props.itemName}
-          category={props.category}
-          menuName={props.menuName}
-          adjField={props.adjustmentField}
+          // Pass in the adjustment id
+          name={props.name}
           updateScreen={setAdjustmentElements}
         />
       </View>

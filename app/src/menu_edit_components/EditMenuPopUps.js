@@ -15,7 +15,8 @@ import {
   addNewAdjustmentField,
   editAdjustmentElement,
   deleteAdjustmentElement,
-  editAdjustmentField
+  editAdjustmentField,
+  addNewAdjElement
 } from "../database/firebase-utility";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import AdjustmentDisplay from "./AdjustmentDisplay";
@@ -28,10 +29,12 @@ import { getItemData } from "../database/menu-data-utility";
 
 // EditElementPopout is the displayed addon elements!!!!
 export const EditElementPopUp = (props) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [name, setName] = useState(props.adjName);
-  const [cost, setCost] = useState(props.adjCost);
+  const adjstData = global.adjustments[props.adjName];
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [name, setName] = useState(adjstData['factors'][props.name]['name']);
+  const [cost, setCost] = useState(adjstData['factors'][props.name]['price']);
+  
   return (
     <View style={modalStyles.centeredView}>
       <Modal
@@ -188,10 +191,10 @@ export const EditElementPopUp = (props) => {
         >
           <View style={{ flexDirection: 'column' }}>
             <Text style={editMenuStyles.adjustmentElementText}>
-              {props.adjName}
+              {adjstData['factors'][props.name]['name']}
             </Text>
             <Text style={editMenuStyles.adjustmentElementCost}>
-              + {Number(props.adjCost).toFixed(2)}
+              + {Number(adjstData['factors'][props.name]['price']).toFixed(2)}
             </Text>
           </View>
         </Pressable>
@@ -316,7 +319,7 @@ export const EditAdjustmentFieldPopUp = (props) => {
           alignSelf: 'center',
           fontWeight: 'bold',
         }}>
-          {props.adjField}
+          {global.adjustments[props.name]['name']}
         </Text>
       </Pressable>
 
@@ -325,6 +328,7 @@ export const EditAdjustmentFieldPopUp = (props) => {
 }
 
 // Pop up to add an adjustment element:
+// Props passed in is the adjustment id
 export const AddAdjustmentElementPopUp = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [name, setName] = useState(null);
@@ -400,25 +404,22 @@ export const AddAdjustmentElementPopUp = (props) => {
               style={[modalStyles.button, modalStyles.buttonClose]}
               onPress={() => {
                 if (name !== null && cost !== null) {
-                  const newObj = {name: name, cost: cost};
-                  // Adjust firebase
-                  addNewAdjustmentElement(props.menuName, props.itemName, props.category, props.adjField, newObj);
+                  const newObj = {name: name, price: parseInt(cost), pos: 2};
+                  // Add the new adjustment factor:
+                  const newId = addNewAdjElement(props.name, newObj);
+
+                  // Note name here is an id
                   props.updateScreen((prev) => [...prev, <EditElementPopUp 
-                                                      key={name} 
-                                                      adjField={props.adjField}
-                                                      adjName={name} 
-                                                      adjCost={cost}
-                                                      itemName={props.itemName}
-                                                      category={props.category}
-                                                      menuName={props.menuName}
-                                                      updateScreen={props.updateScreen}
-                                                    />])
+                                                            key={newId} 
+                                                            name={newId}
+                                                            adjName={props.name} // adjustment name
+                                                            updateScreen={props.updateScreen}
+                                                          />])
                   setModalVisible(!modalVisible);
                 } else {
                   alert('Something went wrong!')
                 }
-              }}
-            >
+              }}>
               <Text style={modalStyles.textStyle}>Add</Text>
             </Pressable>
 

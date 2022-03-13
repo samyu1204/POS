@@ -4,13 +4,29 @@ import global from "../global_information/global";
 //     =================================== Fetching Data From Local Menu Structure =======================================
 // =============================================================================================================================
 
+export const getMenuObj = () => {
+  
+}
+
 /**
  * Get the entire map of the menu:
  * @param {Name of menu} menuName 
  * @returns The entire menu map:
  */
- export const getMenuMap = (menuName) => {
+export const getMenuMap = (menuName) => {
   return global.menuMap.get(menuName);
+}
+
+export const getMenuList = () => {
+  const menuList = [];
+  for (const key in global.menu_info) menuList.push(global.menu_info[key]['name']);
+  return menuList;
+}
+
+export const getMenuCategoryList = (category) => {
+  const catList = [];
+  for (const key in global.categories) catList.push(global.categories[key]['name']);
+  return catList;
 }
 
 /**

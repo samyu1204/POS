@@ -47,6 +47,7 @@ function StartScreen() {
               <Ionicons name='pencil-outline' size={22} color={color} />
             )
            }} />
+
           <Drawer.Screen name="Ordering" component={OrderScreen} options={{ 
             drawerIcon: ({ color }) => (
               <Ionicons name='pencil-outline' size={22} color={color} />

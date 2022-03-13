@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { View, Text, StyleSheet, Button, ScrollView, Dimensions, Pressable } from "react-native";
+import { View, StyleSheet, ScrollView, Dimensions, Button } from "react-native";
 import { 
   CategoryDisplayUnselected, 
   CategoryDisplaySelected,
@@ -7,6 +7,7 @@ import {
 import { editMenuStyles } from "../styles/EditMenuStyleSheet";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ItemDisplay from '../menu_edit_components/ItemDisplay';
+
 import { getCategoryData } from '../database/menu-data-utility';
 import global from "../global_information/global";
 
@@ -14,28 +15,18 @@ import global from "../global_information/global";
 let currentCategory = null;
 
 function EditMenuScreen({ route, navigation }) {
-  // Rendering items:
-  const renderItems = () => {
-    const categoryData = getCategoryData(route.params.menuName, currentCategory);
-      if (categoryData !== null) {
-        return Object.keys(categoryData).map(name => 
-          <ItemDisplay 
-            key={name} 
-            itemName={name} 
-            price={categoryData[name]['basePrice']} 
-            adjustmentObject={categoryData[name]['adjustment']}
-            category={currentCategory}
-            menuName={route.params.menuName}
-          />
-        )
-      }
-    }
+  // Copy the category data into a new variable:
+  const localCatData = JSON.parse(JSON.stringify(global.categories));
+
+  // State for category buttons
+  const [categoryButtons, setCategoryButtons] = useState(null);
+
+  // Set items:
+  const [items, setItems] = useState();
+
   // Rendering category buttons on the screen
   const renderCategoryButtons = () => {
-    //console.log('The current category is ' + category);
-    //console.log('ALLLL')
-    setCategoryButtons(route.params.menuCategories.map(name => {
-      //console.log(name + ' I have: ' + category)
+    setCategoryButtons(Object.keys(localCatData).map(name => {
       if (currentCategory === name) {
         return <CategoryDisplaySelected key={name} categoryName={name} selectCategory={selectNewCategory} />;
       } else {
@@ -44,18 +35,22 @@ function EditMenuScreen({ route, navigation }) {
     }))
   }
 
-  // State for category buttons
-  const [categoryButtons, setCategoryButtons] = useState(null);
-
-  // Set items:
-  const [items, setItems] = useState(renderItems());
+  // Rendering items:
+  const renderItems = () => {
+    if (currentCategory != null) {
+      const itemIdList = Object.keys(localCatData[currentCategory]['items']);
+      // Using id of item to construct components:
+      setItems(itemIdList.map(name => <ItemDisplay key={name} name={name} />))
+    }
+  }
 
   const selectNewCategory = (newCat) => {
     // Set new category:
     currentCategory = newCat;
     renderCategoryButtons();
-    setItems(renderItems());
+    renderItems();
   }
+  
 
   useEffect(() => {
     renderCategoryButtons();
@@ -63,6 +58,7 @@ function EditMenuScreen({ route, navigation }) {
 
   return (
     <View style={styles.background}>
+      <Button title="he" onPress={() => console.log(global.adjustments)} />
       <View style={styles.categoryScrollView}>
         <ScrollView 
           style={styles.categoryScroll} 
@@ -72,7 +68,6 @@ function EditMenuScreen({ route, navigation }) {
 
         </ScrollView>
       </View>
-
       <View style={styles.itemsScrollView}>
         <ScrollView style={styles.itemsScroll}>
           {items}
@@ -85,7 +80,7 @@ function EditMenuScreen({ route, navigation }) {
         bottom: Platform.OS === 'ios' ? '16%' : '10%',
         right: '8.5%',
       }}>
-        <Ionicons name="add-circle-outline" size={60} onPress={() => console.log(global.menuMap)} />
+        <Ionicons name="add-circle-outline" size={60} onPress={() => console.log('HI')} />
       </View>
     </View>
   );
