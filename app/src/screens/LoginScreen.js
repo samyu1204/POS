@@ -96,30 +96,29 @@ function RegisterScreen() {
           >
             {(props) => (
               <View>
+                <KeyboardAvoidingView
+                  style={{flex: 1}}
+                  behavior='position'
+                  enabled
+                >
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Email"
+                    placeholderTextColor={"white"}
+                    onChangeText={props.handleChange("email")}
+                    value={props.values.email}
+                    />
 
-              <KeyboardAvoidingView
-                      style={{flex: 1}}
-                      behavior='position'
-                      enabled
-              >
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Email"
-                  placeholderTextColor={"white"}
-                  onChangeText={props.handleChange("email")}
-                  value={props.values.email}
-                  />
-
-                <TextInput
-                  style={styles.textInput}
-                  secureTextEntry={true}
-                  placeholder="Password"
-                  placeholderTextColor={"white"}
-                  onChangeText={props.handleChange("password")}
-                  value={props.values.password}
-                  />
-                  
-              </KeyboardAvoidingView>
+                  <TextInput
+                    style={styles.textInput}
+                    secureTextEntry={true}
+                    placeholder="Password"
+                    placeholderTextColor={"white"}
+                    onChangeText={props.handleChange("password")}
+                    value={props.values.password}
+                    />
+                    
+                </KeyboardAvoidingView>
 
                 <Text>{"\n"}</Text>
 

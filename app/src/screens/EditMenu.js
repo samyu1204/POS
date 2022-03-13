@@ -7,14 +7,16 @@ import { getMenuList } from '../database/menu-data-utility';
 import global from "../global_information/global";
 
 function EditMenu({ navigation }) {
-    const menuList = getMenuList();
+    // Menu Id list
+    let menuKeyList = Object.keys(global.menu_info);
 
     // setter function rerenders the screen!
     const [menuBarComponents, setMenuBarComponents] = useState([]);
     const [newMenuName, setNewMenuName] = useState();
 
     const renderMenuBars = () => {
-        setMenuBarComponents(menuList.map(name => <MenuBar menuName={name} key={name} />));
+        menuKeyList = Object.keys(global.menu_info);
+        setMenuBarComponents(menuKeyList.map(name => <MenuBar name={name} key={name} />));
     }
     
     // Do after render:
@@ -23,9 +25,9 @@ function EditMenu({ navigation }) {
             alert('Menu Name Required!');
             return;
         }
-        addMenu(newMenuName);
+        const newId = addMenu(newMenuName);
         setNewMenuName('');
-        menuList.push(newMenuName);
+        menuKeyList.push(newId);
         renderMenuBars();
     }
 
@@ -45,7 +47,7 @@ function EditMenu({ navigation }) {
             <View style={{top: "3%", left: "10%", position: 'absolute'}}>
                 <Text style={styles.menuSubTitle} > Menus: </Text>
             </View>
-
+            <Button title='asda' onPress={() => console.log(global.menu_info)} />
             <View style={styles.scrollViewDesign}>
                 <ScrollView style={{width: 1000}}>
                     {menuBarComponents}

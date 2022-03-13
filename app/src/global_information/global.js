@@ -4,4 +4,7 @@ module.exports = {
     categories: null,
     items: null,
     adjustments: null,
+    
+    // Tracks the focused menu ID
+    focusedMenu: null, 
 }

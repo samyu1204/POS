@@ -12,7 +12,6 @@ import AddMenuItemScreen from './app/src/screens/AddMenuItemScreen';
 import StartScreen from './app/src/screens/StartScreen';
 import OrderScreen from './app/src/screens/OrderScreen';
 import EditMenu from './app/src/screens/EditMenu';
-import DisplayMenuScreen from './app/src/screens/DisplayMenuScreen';
 import EditMenuScreen from './app/src/screens/EditMenuScreen';
 
 /**
@@ -39,7 +38,6 @@ function StackNavigator() {
         <Stack.Screen name="Order" component={OrderScreen} />
         <Stack.Screen name="EditMenu" component={EditMenu} />
         <Stack.Screen name="EditMenuScreen" component={EditMenuScreen} />
-        <Stack.Screen name="DisplayMenuScreen" component={DisplayMenuScreen} />
       </Stack.Group>
     </Stack.Navigator>
   );

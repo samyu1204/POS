@@ -35,15 +35,15 @@ export const setGlobalUserData = async () => {
     const menuSnap = await getDoc(menuInfoRef);
     global.menu_info = menuSnap.data();
 
-    const categoriesInfoRef = doc(db, global.session_user, 'menu_info');
+    const categoriesInfoRef = doc(db, global.session_user, 'categories');
     const categoriesSnap = await getDoc(categoriesInfoRef);
     global.categories = categoriesSnap.data()
 
-    const itemsInfoRef = doc(db, global.session_user, 'menu_info');
+    const itemsInfoRef = doc(db, global.session_user, 'items');
     const itemsSnap = await getDoc(itemsInfoRef);
     global.items = itemsSnap.data();
     
-    const adjustmentsInfoRef = doc(db, global.session_user, 'menu_info');
+    const adjustmentsInfoRef = doc(db, global.session_user, 'adjustments');
     const adjustmentsSnap = await getDoc(adjustmentsInfoRef);
     global.adjustments = adjustmentsSnap.data();
 }
@@ -71,20 +71,30 @@ export const removeMenu = async(menuName) => {
 // =================================== Functions relation to adding elements to the menu =======================================
 // =============================================================================================================================
 
-// Adding a menu to the firebase as well as the global menu reference:
-export const addMenu = async (menuName) => {
+/**
+ * Adds new menu - updates local and firebase
+ * @param {*} menuName 
+ * @returns Id of the new menu
+ */
+export const addMenu = (menuName) => {
     const newMenu = {};
     const menuId = 'menu_' + Date.now();
+    // Create new menu object
     newMenu[menuId] = {
         name: menuName,
         pos: 0,
-    }
+        categories: {},
+    };
 
-    // Create a menu_info doc along with the actual menu collection:
-    await updateDoc(doc(db, global.session_user, 'menu_info'), newMenu);
+    // Add the data to firebase
+    (async () => {
+        await updateDoc(doc(db, global.session_user, 'menu_info'), newMenu);
+    })();
 
-    // Update global data:
-    setGlobalUserData();
+    // Add to global:
+    global.menu_info[menuId] = newMenu[menuId];
+
+    return menuId;
 }
 
 // Adding menu category to a menu:
@@ -92,23 +102,6 @@ export const addCategory = async(menuName, categoryName) => {
     await setDoc(doc(db, global.session_user, 'menus', menuName, categoryName), {});
 }
 
-/**
- * Function requires:
- *  - Item Name -> passed in as string
- *  - Base Price -> passed in as number 
- *  - Addons -> object
- */
-export const addMenuItem = async(menu, category, itemName, basePrice, adjustment) => {
-    // Create the menu item object
-    let itemObj = {};
-    itemObj[itemName] = {
-        basePrice: basePrice,
-        adjustment: adjustment
-    }
-
-    // Update so it wont remove existing data:
-    await updateDoc(doc(db, global.session_user, 'menus', menu, category), itemObj);
-}
 
 // ======================================================================================
 
@@ -118,46 +111,26 @@ export const addMenuItem = async(menu, category, itemName, basePrice, adjustment
 // =============================================================================================================================
 
 /**
- * Add a new adjustment
- * @param {} info object:
- * @param {*} adjName 
+ * Adding new adjustment element to an adjField (firebase and global)
+ * @param {*} adjId 
+ * @param {*} newObj 
+ * @returns ID of new adjustment element
  */
-export const addNewAdjustmentField = async(menuName, itemName, category, adjName) => {
-    // Address to update:
-    const updateString = itemName + '.' + 'adjustment' + '.' + String(adjName).toLowerCase();
-    const updateObj = {}
-    updateObj[updateString] = {};
+export const addNewAdjElement = (adjId, newObj) => {
+    // Update obj
+    const newId = 'factor_' + Date.now();
+    const tmp = {}
+    tmp['' + adjId + '.' + 'factors' + '.' + newId] = newObj;
 
-    // Update firebase data:
-    await updateDoc(doc(db, global.session_user, 'menus', menuName, category), updateObj);
+    // Add to firebase:
+    (async () => {
+        await updateDoc(doc(db, global.session_user, 'adjustments'), tmp);
+    })();
 
-    // Add it to global menu data:
-    // const menuItem = global.menuMap.get(menuName)[category][itemName];
-    // menuItem['adjustment'][adjName.toLowerCase()] = {hello: 1};
-}
+    // Update global
+    global.adjustments[adjId]['factors'][newId] = newObj;
 
-/**
- * Adding new element adjustments to an adjustment field:
- * @param {*} menuName 
- * @param {*} itemName 
- * @param {*} category 
- * @param {*} adjName 
- * @param { name: name, cost: cost } newObj 
- */
-export const addNewAdjustmentElement = async(menuName, itemName, category, adjName, newObj) => {
-    const elementName = String(newObj['name']).toLowerCase();
-    const elementCost = Number(newObj['cost']);
-    // Address to update:
-    const updateString = itemName + '.' + 'adjustment' + '.' + String(adjName).toLowerCase() + '.' + elementName;
-    const updateObj = {}
-    updateObj[updateString] = elementCost;
-
-    // Update firebase data:
-    await updateDoc(doc(db, global.session_user, 'menus', menuName, category), updateObj);
-
-    // Add it to global menu data:
-    const menuItem = global.menuMap.get(menuName)[category][itemName];
-    menuItem['adjustment'][adjName][elementName] = elementCost;
+    return newId;
 }
 
 // Edit the name and cost of elements of adjustments:

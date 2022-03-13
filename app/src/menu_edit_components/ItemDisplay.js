@@ -4,21 +4,20 @@ import { editMenuStyles } from "../styles/EditMenuStyleSheet";
 import AdjustmentDisplay from "./AdjustmentDisplay";
 import { AddAdjustmentPopUp } from "./EditMenuPopUps";
 import { getItemData } from "../database/menu-data-utility";
+import global from "../global_information/global";
 
 function ItemDisplay(props) {
   // Sets the adjustment views - showing all user's adjustments:
   const [adjustmentView, setAdjustmentView] = useState(null);
 
   const renderAdjustmentDisplay = () => {
-    const itemData = getItemData(props.menuName, props.category, props.itemName);
+    // List of adjustment ids:
+    const adjIdList = Object.keys(global.items[props.name]['adjustments']);
     setAdjustmentView(
-      Object.keys(itemData['adjustment']).map(name =>
+      adjIdList.map(name =>
         <AdjustmentDisplay 
           key={name} 
-          adjustmentField={name} 
-          itemName={props.itemName}
-          category={props.category}
-          menuName={props.menuName}
+          name={name}
           updateAdjustmentDisplay={setAdjustmentView}
         />
       )
@@ -27,7 +26,6 @@ function ItemDisplay(props) {
   
   useLayoutEffect(() => {
     renderAdjustmentDisplay();
-    
   }, [])
 
   return (
@@ -38,8 +36,8 @@ function ItemDisplay(props) {
           onPress={() => console.log('HELLO')}
         >
           <View style={{ flexDirection: 'row' }}>
-            <Text style={editMenuStyles.itemNameText}>{props.itemName}</Text>
-            <Text style={editMenuStyles.itemBasePriceText}>Base Price: ${props.price}</Text>
+            <Text style={editMenuStyles.itemNameText}>{global.items[props.name]['name']}</Text>
+            <Text style={editMenuStyles.itemBasePriceText}>Base Price: ${global.items[props.name]['base_price']}</Text>
           </View>
         </TouchableOpacity>
       </View>
