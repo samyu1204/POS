@@ -16,7 +16,8 @@ import {
   editAdjustmentElement,
   deleteAdjustmentElement,
   editAdjustmentField,
-  addNewAdjElement
+  addNewAdjElement,
+  deleteAdjstField
 } from "../database/firebase-utility";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import AdjustmentDisplay from "./AdjustmentDisplay";
@@ -28,13 +29,28 @@ import { getItemData } from "../database/menu-data-utility";
 // =============================================================================================================================
 
 // EditElementPopout is the displayed addon elements!!!!
+// props.adjName - name of the adjustment field 
+// props.name - name of the adjustment element
 export const EditElementPopUp = (props) => {
   const adjstData = global.adjustments[props.adjName];
 
   const [modalVisible, setModalVisible] = useState(false);
   const [name, setName] = useState(adjstData['factors'][props.name]['name']);
   const [cost, setCost] = useState(adjstData['factors'][props.name]['price']);
-  
+
+  const renderUpdate = () => {
+    const adjElementIdList = Object.keys(global.adjustments[props.adjName]['factors']);
+    props.updateScreen(() => {
+      return adjElementIdList.map(name =>
+        <EditElementPopUp 
+          key={name} 
+          name={name}
+          adjName={props.adjName}
+          updateScreen={props.updateScreen}
+        />)
+    });
+  }
+
   return (
     <View style={modalStyles.centeredView}>
       <Modal
@@ -94,30 +110,17 @@ export const EditElementPopUp = (props) => {
                   onChangeText={(text) => setCost(text)}
                 />
               </View>
-
+            
+            {/* Editing the element name and cost: */}
             <Pressable
               style={[modalStyles.button, modalStyles.buttonClose]}
               onPress={() => {
                 if (props.adjName !== name || Number(props.adjCost) !== cost) {
-                  // Usually here would rerender:
-                  const newObj = {name: name, cost: cost}
-                  editAdjustmentElement(props.menuName, props.itemName, props.category, props.adjField, props.adjName, newObj);
+                  const pos = 0; // also need to consider updating the position factor:
+                  // Edit the adjustment fields:
+                  editAdjustmentElement(props.adjName, props.name, name, cost, pos);
                   // Updating screen:
-                  const itemData = getItemData(props.menuName, props.category, props.itemName);
-                  const adjustmentArray = itemData['adjustment'][props.adjField];
-                  props.updateScreen(() => {
-                    return Object.keys(adjustmentArray).map(name =>
-                      <EditElementPopUp 
-                        key={name} 
-                        adjField={props.adjField}
-                        adjName={name} 
-                        adjCost={adjustmentArray[name]}
-                        itemName={props.itemName}
-                        category={props.category}
-                        menuName={props.menuName}
-                        updateScreen={props.updateScreen}
-                      />)
-                  });
+                  renderUpdate();
                   setModalVisible(false);
                 } else {
                   alert('Fields have not been changed!')
@@ -141,23 +144,10 @@ export const EditElementPopUp = (props) => {
                 size={30}
                 color='white'
                 onPress={() => {
-                  deleteAdjustmentElement(props.menuName, props.itemName, props.category, props.adjField, props.adjName)
+                  // Delete the corresponding element:
+                  deleteAdjustmentElement(props.adjName, props.name);
                   // Updating screen:
-                  const itemData = getItemData(props.menuName, props.category, props.itemName);
-                  const adjustmentArray = itemData['adjustment'][props.adjField];
-                  props.updateScreen(() => {
-                    return Object.keys(adjustmentArray).map(name =>
-                      <EditElementPopUp 
-                        key={name} 
-                        adjField={props.adjField}
-                        adjName={name} 
-                        adjCost={adjustmentArray[name]}
-                        itemName={props.itemName}
-                        category={props.category}
-                        menuName={props.menuName}
-                        updateScreen={props.updateScreen}
-                      />)
-                  });
+                  renderUpdate();
                 }}
                 />
             </View>
@@ -206,7 +196,7 @@ export const EditElementPopUp = (props) => {
 // For editing adjustment fields:
 export const EditAdjustmentFieldPopUp = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [name, setName] = useState(props.adjField)
+  const [name, setName] = useState(global.adjustments[props.adjFieldId]['name'])
 
   return (
     <View style={modalStyles.centeredView}>
@@ -248,28 +238,19 @@ export const EditAdjustmentFieldPopUp = (props) => {
                 onChangeText={(text) => setName(text)}
               />
 
+            {/* Edit adjustment field name */}
             <Pressable
               style={[modalStyles.editAdjustmentFieldApplyButton]}
               onPress={() => {
                 if (props.adjField !== name) {
-                  editAdjustmentField(props.menuName, props.itemName, props.category, props.adjField, name);
-                  // Rerender to apply update:
-                  const itemData = getItemData(props.menuName, props.category, props.itemName);
-                  props.updateAdjustmentDisplay(
-                    Object.keys(itemData['adjustment']).map(name =>
-                      <AdjustmentDisplay 
-                        key={name} 
-                        adjustmentField={name} 
-                        itemName={props.itemName}
-                        category={props.category}
-                        menuName={props.menuName}
-                        updateAdjustmentDisplay={props.updateAdjustmentDisplay}
-                      />
-                    )
-                  )
+                  // Update name of adjustment
+                  editAdjustmentField(name, props.adjFieldId);
+                  // Re-render:
+                  props.updateAdjustmentDisplay();
                 } else {
                   alert('Something went wrong!')
                 }
+                setModalVisible(!modalVisible);
               }}
             >
               <Text style={modalStyles.textStyle}>Apply</Text>
@@ -288,7 +269,11 @@ export const EditAdjustmentFieldPopUp = (props) => {
                 name='trash'
                 size={30}
                 color='white'
-                onPress={() => console.log('hi')}
+                onPress={() => {
+                  deleteAdjstField(props.adjFieldId, props.itemId);
+                  // Re-render:
+                  props.updateAdjustmentDisplay();
+                }}
                 />
             </View>
 
@@ -319,7 +304,7 @@ export const EditAdjustmentFieldPopUp = (props) => {
           alignSelf: 'center',
           fontWeight: 'bold',
         }}>
-          {global.adjustments[props.name]['name']}
+          {global.adjustments[props.adjFieldId]['name']}
         </Text>
       </Pressable>
 
@@ -492,18 +477,9 @@ export const AddAdjustmentPopUp = (props) => {
               style={[modalStyles.button, modalStyles.buttonClose]}
               onPress={() => {
                 if (adjName !== null) {
-                  addNewAdjustmentField(props.menuName, props.itemName, props.category, adjName);
-                  // Add it to global
-                  const menuItem = global.menuMap.get(props.menuName)[props.category][props.itemName];
-                  menuItem['adjustment'][adjName.toLowerCase()] = {};
-                  props.addToAdjView((prev) => [...prev, <AdjustmentDisplay 
-                                                            key={adjName} 
-                                                            adjustmentName={adjName} 
-                                                            adjustmentField={adjName} 
-                                                            itemName={props.itemName}
-                                                            category={props.category}
-                                                            menuName={props.menuName}
-                                                          />])
+                  // Add the new adjustment field:
+                  addNewAdjustmentField(props.itemId, adjName);
+                  props.updateAdjustmentDisplay();
                   setModalVisible(!modalVisible);
                 } else {
                   alert('Something went wrong!')

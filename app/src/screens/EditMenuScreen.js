@@ -35,12 +35,13 @@ function EditMenuScreen({ route, navigation }) {
     }))
   }
 
-  // Rendering items:
+  // Rendering item displays:
   const renderItems = () => {
     if (currentCategory != null) {
-      const itemIdList = Object.keys(localCatData[currentCategory]['items']);
+      //console.log(global.items)
+      const itemIdList = Object.keys(global.categories[currentCategory]['items']);
       // Using id of item to construct components:
-      setItems(itemIdList.map(name => <ItemDisplay key={name} name={name} />))
+      setItems(itemIdList.map(name => <ItemDisplay key={name} itemId={name} />))
     }
   }
 
@@ -50,7 +51,6 @@ function EditMenuScreen({ route, navigation }) {
     renderCategoryButtons();
     renderItems();
   }
-  
 
   useEffect(() => {
     renderCategoryButtons();
@@ -58,14 +58,20 @@ function EditMenuScreen({ route, navigation }) {
 
   return (
     <View style={styles.background}>
-      <Button title="he" onPress={() => console.log(global.adjustments)} />
+      <Ionicons 
+        name="arrow-back-circle-outline" 
+        color={'#000000'}
+        size={70} 
+        onPress={() => navigation.goBack()}
+        style={styles.backButton} 
+      />
+      
       <View style={styles.categoryScrollView}>
         <ScrollView 
           style={styles.categoryScroll} 
           contentContainerStyle={editMenuStyles.scrollContentContainer} 
         >
           {categoryButtons}
-
         </ScrollView>
       </View>
       <View style={styles.itemsScrollView}>
@@ -80,7 +86,7 @@ function EditMenuScreen({ route, navigation }) {
         bottom: Platform.OS === 'ios' ? '16%' : '10%',
         right: '8.5%',
       }}>
-        <Ionicons name="add-circle-outline" size={60} onPress={() => console.log('HI')} />
+        <Ionicons name="add-circle-outline" size={70} onPress={() => console.log('HI')} />
       </View>
     </View>
   );
@@ -114,6 +120,11 @@ const styles = StyleSheet.create({
     flex: 1,
     height: (3 * Dimensions.get('screen').height)/4,
     marginTop: Dimensions.get('screen').height/9,
+  },
+  backButton: {
+    position: 'absolute',
+    marginTop: Dimensions.get('screen').height/20,
+    left: Dimensions.get('screen').width/70,
   }
 });
 

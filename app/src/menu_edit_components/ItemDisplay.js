@@ -12,13 +12,14 @@ function ItemDisplay(props) {
 
   const renderAdjustmentDisplay = () => {
     // List of adjustment ids:
-    const adjIdList = Object.keys(global.items[props.name]['adjustments']);
+    const adjIdList = Object.keys(global.items[props.itemId]['adjustments']);
     setAdjustmentView(
       adjIdList.map(name =>
         <AdjustmentDisplay 
           key={name} 
-          name={name}
-          updateAdjustmentDisplay={setAdjustmentView}
+          name={name} // name - adjustment field id's
+          itemId={props.itemId}
+          updateAdjustmentDisplay={renderAdjustmentDisplay}
         />
       )
     )
@@ -36,8 +37,8 @@ function ItemDisplay(props) {
           onPress={() => console.log('HELLO')}
         >
           <View style={{ flexDirection: 'row' }}>
-            <Text style={editMenuStyles.itemNameText}>{global.items[props.name]['name']}</Text>
-            <Text style={editMenuStyles.itemBasePriceText}>Base Price: ${global.items[props.name]['base_price']}</Text>
+            <Text style={editMenuStyles.itemNameText}>{global.items[props.itemId]['name']}</Text>
+            <Text style={editMenuStyles.itemBasePriceText}>Base Price: ${global.items[props.itemId]['base_price']}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -47,13 +48,12 @@ function ItemDisplay(props) {
         {/* Array of adjustment views */}
         {adjustmentView}
       </View>
-      
+
       {/* Add adjustment button: */}
       <AddAdjustmentPopUp 
-        addToAdjView={setAdjustmentView} 
-        itemName={props.itemName}
-        category={props.category}
-        menuName={props.menuName}
+        itemId={props.itemId}
+        addToAdjView={setAdjustmentView}
+        updateAdjustmentDisplay={renderAdjustmentDisplay}
       />
     </View>
     

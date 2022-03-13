@@ -16,7 +16,6 @@ import { Logo } from "../utility/Logo.js";
 import { authentication } from "../database/firebase-config.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import global from "../global_information/global.js";
-import { mapGlobalMenuOnSignIn } from "../database/firebase-utility.js";
 import { setGlobalUserData } from "../database/firebase-utility.js";
 
 function RegisterScreen() {
