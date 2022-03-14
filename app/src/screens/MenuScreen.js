@@ -25,7 +25,7 @@ function MenuScreen() {
 
     return (
         <View style={styles.container}>
-            <Button title='HELLO' onPress={() => console.log(global.adjustments)} />
+            <Button title='HELLO' onPress={() => console.log(global.items)} />
             <Animated.View style={[styles.ball, ball.getLayout()]}>
                 <Text style={styles.text}>+</Text>
                 <Text style={styles.text}>HELLO</Text>

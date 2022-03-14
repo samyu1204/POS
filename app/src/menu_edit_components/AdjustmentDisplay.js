@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useLayoutEffect} from "react";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
+import { ScrollView } from "react-native-gesture-handler";
 import { editMenuStyles } from "../styles/EditMenuStyleSheet";
 import { AddAdjustmentElementPopUp,EditElementPopUp, EditAdjustmentFieldPopUp  } from "./EditMenuPopUps.js" 
 import { getItemData } from "../database/menu-data-utility";
@@ -22,8 +22,8 @@ function AdjustmentDisplay(props) {
       adjustmentIdList.map(name =>
         <EditElementPopUp 
           key={name} 
-          name={name}
-          adjName={props.name}
+          name={name} 
+          adjName={props.name} // adjustment field id
           updateScreen={setAdjustmentElements}
         />
       )
@@ -34,11 +34,12 @@ function AdjustmentDisplay(props) {
     renderAdjustmentElement();
   }, [])
 
-
   return (
     <View style={styles.background}>
       <EditAdjustmentFieldPopUp 
-        name={props.name}
+        adjFieldId={props.name} 
+        itemId ={props.itemId} 
+        // pass the rerender function into the edit pop-up:
         updateAdjustmentDisplay={props.updateAdjustmentDisplay}
         />
       

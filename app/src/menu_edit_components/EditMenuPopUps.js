@@ -16,7 +16,12 @@ import {
   editAdjustmentElement,
   deleteAdjustmentElement,
   editAdjustmentField,
-  addNewAdjElement
+  addNewAdjElement,
+  deleteAdjstField,
+  addItem,
+  editItem,
+  removeItem,
+  addCategory
 } from "../database/firebase-utility";
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import AdjustmentDisplay from "./AdjustmentDisplay";
@@ -28,13 +33,28 @@ import { getItemData } from "../database/menu-data-utility";
 // =============================================================================================================================
 
 // EditElementPopout is the displayed addon elements!!!!
+// props.adjName - name of the adjustment field 
+// props.name - name of the adjustment element
 export const EditElementPopUp = (props) => {
   const adjstData = global.adjustments[props.adjName];
 
   const [modalVisible, setModalVisible] = useState(false);
   const [name, setName] = useState(adjstData['factors'][props.name]['name']);
   const [cost, setCost] = useState(adjstData['factors'][props.name]['price']);
-  
+
+  const renderUpdate = () => {
+    const adjElementIdList = Object.keys(global.adjustments[props.adjName]['factors']);
+    props.updateScreen(() => {
+      return adjElementIdList.map(name =>
+        <EditElementPopUp 
+          key={name} 
+          name={name}
+          adjName={props.adjName}
+          updateScreen={props.updateScreen}
+        />)
+    });
+  }
+
   return (
     <View style={modalStyles.centeredView}>
       <Modal
@@ -94,30 +114,17 @@ export const EditElementPopUp = (props) => {
                   onChangeText={(text) => setCost(text)}
                 />
               </View>
-
+            
+            {/* Editing the element name and cost: */}
             <Pressable
               style={[modalStyles.button, modalStyles.buttonClose]}
               onPress={() => {
                 if (props.adjName !== name || Number(props.adjCost) !== cost) {
-                  // Usually here would rerender:
-                  const newObj = {name: name, cost: cost}
-                  editAdjustmentElement(props.menuName, props.itemName, props.category, props.adjField, props.adjName, newObj);
+                  const pos = 0; // also need to consider updating the position factor:
+                  // Edit the adjustment fields:
+                  editAdjustmentElement(props.adjName, props.name, name, cost, pos);
                   // Updating screen:
-                  const itemData = getItemData(props.menuName, props.category, props.itemName);
-                  const adjustmentArray = itemData['adjustment'][props.adjField];
-                  props.updateScreen(() => {
-                    return Object.keys(adjustmentArray).map(name =>
-                      <EditElementPopUp 
-                        key={name} 
-                        adjField={props.adjField}
-                        adjName={name} 
-                        adjCost={adjustmentArray[name]}
-                        itemName={props.itemName}
-                        category={props.category}
-                        menuName={props.menuName}
-                        updateScreen={props.updateScreen}
-                      />)
-                  });
+                  renderUpdate();
                   setModalVisible(false);
                 } else {
                   alert('Fields have not been changed!')
@@ -141,23 +148,10 @@ export const EditElementPopUp = (props) => {
                 size={30}
                 color='white'
                 onPress={() => {
-                  deleteAdjustmentElement(props.menuName, props.itemName, props.category, props.adjField, props.adjName)
+                  // Delete the corresponding element:
+                  deleteAdjustmentElement(props.adjName, props.name);
                   // Updating screen:
-                  const itemData = getItemData(props.menuName, props.category, props.itemName);
-                  const adjustmentArray = itemData['adjustment'][props.adjField];
-                  props.updateScreen(() => {
-                    return Object.keys(adjustmentArray).map(name =>
-                      <EditElementPopUp 
-                        key={name} 
-                        adjField={props.adjField}
-                        adjName={name} 
-                        adjCost={adjustmentArray[name]}
-                        itemName={props.itemName}
-                        category={props.category}
-                        menuName={props.menuName}
-                        updateScreen={props.updateScreen}
-                      />)
-                  });
+                  renderUpdate();
                 }}
                 />
             </View>
@@ -206,7 +200,7 @@ export const EditElementPopUp = (props) => {
 // For editing adjustment fields:
 export const EditAdjustmentFieldPopUp = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [name, setName] = useState(props.adjField)
+  const [name, setName] = useState(global.adjustments[props.adjFieldId]['name'])
 
   return (
     <View style={modalStyles.centeredView}>
@@ -248,28 +242,19 @@ export const EditAdjustmentFieldPopUp = (props) => {
                 onChangeText={(text) => setName(text)}
               />
 
+            {/* Edit adjustment field name */}
             <Pressable
               style={[modalStyles.editAdjustmentFieldApplyButton]}
               onPress={() => {
                 if (props.adjField !== name) {
-                  editAdjustmentField(props.menuName, props.itemName, props.category, props.adjField, name);
-                  // Rerender to apply update:
-                  const itemData = getItemData(props.menuName, props.category, props.itemName);
-                  props.updateAdjustmentDisplay(
-                    Object.keys(itemData['adjustment']).map(name =>
-                      <AdjustmentDisplay 
-                        key={name} 
-                        adjustmentField={name} 
-                        itemName={props.itemName}
-                        category={props.category}
-                        menuName={props.menuName}
-                        updateAdjustmentDisplay={props.updateAdjustmentDisplay}
-                      />
-                    )
-                  )
+                  // Update name of adjustment
+                  editAdjustmentField(name, props.adjFieldId);
+                  // Re-render:
+                  props.updateAdjustmentDisplay();
                 } else {
                   alert('Something went wrong!')
                 }
+                setModalVisible(!modalVisible);
               }}
             >
               <Text style={modalStyles.textStyle}>Apply</Text>
@@ -288,7 +273,11 @@ export const EditAdjustmentFieldPopUp = (props) => {
                 name='trash'
                 size={30}
                 color='white'
-                onPress={() => console.log('hi')}
+                onPress={() => {
+                  deleteAdjstField(props.adjFieldId, props.itemId);
+                  // Re-render:
+                  props.updateAdjustmentDisplay();
+                }}
                 />
             </View>
 
@@ -319,7 +308,7 @@ export const EditAdjustmentFieldPopUp = (props) => {
           alignSelf: 'center',
           fontWeight: 'bold',
         }}>
-          {global.adjustments[props.name]['name']}
+          {global.adjustments[props.adjFieldId]['name']}
         </Text>
       </Pressable>
 
@@ -339,7 +328,7 @@ export const AddAdjustmentElementPopUp = (props) => {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      position: 'absolute'
+      position: 'absolute',
     }}>
       <Modal
         animationType="fade"
@@ -436,7 +425,7 @@ export const AddAdjustmentElementPopUp = (props) => {
           width: '200%',
           height: '85%',
           borderRadius: 15,
-          left: Dimensions.get('screen').width/1.9
+          left: Dimensions.get('screen').width/1.9,
         }}
         onPress={() => setModalVisible(true)}
       >
@@ -492,18 +481,9 @@ export const AddAdjustmentPopUp = (props) => {
               style={[modalStyles.button, modalStyles.buttonClose]}
               onPress={() => {
                 if (adjName !== null) {
-                  addNewAdjustmentField(props.menuName, props.itemName, props.category, adjName);
-                  // Add it to global
-                  const menuItem = global.menuMap.get(props.menuName)[props.category][props.itemName];
-                  menuItem['adjustment'][adjName.toLowerCase()] = {};
-                  props.addToAdjView((prev) => [...prev, <AdjustmentDisplay 
-                                                            key={adjName} 
-                                                            adjustmentName={adjName} 
-                                                            adjustmentField={adjName} 
-                                                            itemName={props.itemName}
-                                                            category={props.category}
-                                                            menuName={props.menuName}
-                                                          />])
+                  // Add the new adjustment field:
+                  addNewAdjustmentField(props.itemId, adjName);
+                  props.updateAdjustmentDisplay();
                   setModalVisible(!modalVisible);
                 } else {
                   alert('Something went wrong!')
@@ -520,7 +500,7 @@ export const AddAdjustmentPopUp = (props) => {
         </View>
       </Modal>
       <Pressable
-        style={[modalStyles.button, modalStyles.buttonOpen]}
+        style={[modalStyles.button, modalStyles.buttonOpen, {top: '20%'}]}
         onPress={() => setModalVisible(true)}
       >
         <Text style={modalStyles.textStyle}>+ New Adjustment</Text>
@@ -529,3 +509,347 @@ export const AddAdjustmentPopUp = (props) => {
   );
 };
 
+
+/**
+ * Adds an itme to the menu
+ * @param {*} props 
+ * - props.catId - id of category we want to add item to
+ * - props.updateScreen - rerender updated information
+ * @returns 
+ */
+export const AddItemPopUp = (props) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [name, setName] = useState(null);
+  const [cost, setCost] = useState(null);
+
+  return (
+    <View style={{
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      position: 'absolute'
+    }}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={modalStyles.centeredView}>
+          <View style={modalStyles.newVariantModalView}>
+
+            <View style={modalStyles.modalHeading}>
+              <Text style={modalStyles.modalText}>New Item</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', width: 300}}>
+              <Kohana
+                  style={{ 
+                    backgroundColor: '#f9f5ed', 
+                    top: '-20%',
+                    borderRadius: 15,
+                    right: '2%'
+                  }}
+                  label={'Name:'}
+                  iconClass={Ionicons}
+                  iconName={'pencil'}
+                  iconColor={'#f4d29a'}
+                  inputPadding={16}
+                  labelStyle={{ color: '#BEB38B' }}
+                  inputStyle={{ color: '#BEB38B' }}
+                  labelContainerStyle={{ padding: 2 }}
+                  iconContainerStyle={{ padding: 16 }}
+                  useNativeDriver
+                  onChangeText={(text) => setName(text)}
+                />
+
+                <Kohana
+                  style={{ 
+                    backgroundColor: '#f9f5ed', 
+                    top: '-20%',
+                    borderRadius: 15,
+                    left: '2%',
+                  }}
+                  keyboardType = 'numeric'
+                  label={'Base Price:'}
+                  iconClass={FontAwesome5}
+                  iconName={'money-bill-wave'}
+                  iconColor={'#f4d29a'}
+                  inputPadding={16}
+                  labelStyle={{ color: '#BEB38B' }}
+                  inputStyle={{ color: '#BEB38B' }}
+                  labelContainerStyle={{ padding: 2 }}
+                  iconContainerStyle={{ padding: 8 }}
+                  useNativeDriver
+                  onChangeText={(text) => setCost(text)}
+                />
+              
+            </View>
+            <Pressable
+              style={[modalStyles.button, modalStyles.buttonClose]}
+              onPress={() => {
+                if (name !== null && cost !== null && props.catId !== null) {
+                  // New item object:
+                  const newItemObj = {
+                    name: name, 
+                    base_price: Number(cost),
+                    adjustments: {}, 
+                    pos: 0 // needs configuration
+                  };
+                  // Add new item to menu category;
+                  console.log(props.catId)
+                  addItem(props.catId, newItemObj);
+                  props.updateScreen();
+                  // Reset modal:
+                  setModalVisible(!modalVisible);
+                } else {
+                  alert('Something went wrong!')
+                }
+              }}>
+              <Text style={modalStyles.textStyle}>Add</Text>
+            </Pressable>
+
+            <Ionicons style={modalStyles.cancelButton} name='close' size={40} onPress={() => {
+              setModalVisible(!modalVisible);
+            }} /> 
+          </View>
+        </View>
+      </Modal>
+
+      <Pressable
+        style={{
+          position: 'absolute',
+          right: -Dimensions.get('screen').width/100,
+          top: - Dimensions.get('screen').height/15
+        }}
+        onPress={() => setModalVisible(true)}
+      >
+        <Ionicons name="add-circle-outline" size={70} />
+      </Pressable>
+    </View>
+  );
+};
+
+/**
+ * Edit the item name and base price
+ * @param {*} props 
+ * props.catId
+ * props.itemId
+ * @returns 
+ */
+export const EditItemPopUp = (props) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [name, setName] = useState(global.items[props.itemId]['name']);
+  const [cost, setCost] = useState(global.items[props.itemId]['base_price']);
+
+  return (
+    <View style={{
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      position: 'absolute'
+    }}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={modalStyles.centeredView}>
+          <View style={modalStyles.newVariantModalView}>
+
+            <View style={modalStyles.modalHeading}>
+              <Text style={modalStyles.modalText}>Edit Item</Text>
+            </View>
+
+            <View style={{flexDirection: 'row', width: 300}}>
+              <Kohana
+                  style={{ 
+                    backgroundColor: '#f9f5ed', 
+                    top: '-20%',
+                    borderRadius: 15,
+                    right: '2%'
+                  }}
+                  label={'Name:'}
+                  iconClass={Ionicons}
+                  iconName={'pencil'}
+                  iconColor={'#f4d29a'}
+                  inputPadding={16}
+                  labelStyle={{ color: '#BEB38B' }}
+                  inputStyle={{ color: '#BEB38B' }}
+                  labelContainerStyle={{ padding: 2 }}
+                  iconContainerStyle={{ padding: 16 }}
+                  useNativeDriver
+                  onChangeText={(text) => setName(text)}
+                  value={name}
+                />
+
+                <Kohana
+                  style={{ 
+                    backgroundColor: '#f9f5ed', 
+                    top: '-20%',
+                    borderRadius: 15,
+                    left: '2%',
+                  }}
+                  keyboardType = 'numeric'
+                  label={'Base Price:'}
+                  iconClass={FontAwesome5}
+                  iconName={'money-bill-wave'}
+                  iconColor={'#f4d29a'}
+                  inputPadding={16}
+                  labelStyle={{ color: '#BEB38B' }}
+                  inputStyle={{ color: '#BEB38B' }}
+                  labelContainerStyle={{ padding: 2 }}
+                  iconContainerStyle={{ padding: 8 }}
+                  useNativeDriver
+                  onChangeText={(text) => setCost(text)}
+                  value={String(cost)} // have to use string to express
+                />
+              
+            </View>
+            <Pressable
+              style={[modalStyles.button, modalStyles.buttonClose]}
+              onPress={() => {
+                if (name !== null && cost !== null) {
+                  // Edit the field of the item:
+                  editItem(props.itemId, name, cost);
+                  props.updateScreen();
+                  // Reset modal:
+                  setModalVisible(!modalVisible);
+                } else {
+                  alert('Something went wrong!')
+                }
+              }}>
+              <Text style={modalStyles.textStyle}>Add</Text>
+            </Pressable>
+
+            <Ionicons style={modalStyles.cancelButton} name='close' size={40} onPress={() => {
+              setName(global.items[props.itemId]['name']);
+              setCost(global.items[props.itemId]['base_price']);
+              setModalVisible(!modalVisible);
+            }} /> 
+
+            <View 
+              style={{
+                position: 'absolute',
+                backgroundColor: '#F8474A',
+                borderRadius: 10,
+                bottom: '30%',
+                left: '5%',
+                padding: 3
+              }}>
+                <Ionicons 
+                  name='trash'
+                  size={30}
+                  color='white'
+                  onPress={() => {
+                    // Remove the item from menu:
+                    removeItem(props.itemId, props.catId)
+                    // Re-render:
+                    props.updateScreen();
+                  }}
+                  />
+            </View>
+          </View>
+
+        </View>
+      </Modal>
+
+      <Pressable
+        style={{
+          backgroundColor: 'white',
+          width: Dimensions.get('screen').width/1.9,
+          left: Dimensions.get('screen').width/16,
+          borderRadius: 20
+        }}
+        onPress={() => setModalVisible(true)}
+      >
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={editMenuStyles.itemNameText}>{name}</Text>
+          <Text style={editMenuStyles.itemBasePriceText}>Base Price: ${cost}</Text>
+        </View>
+      </Pressable>
+    </View>
+  );
+};
+
+// Add a category to menu:
+export const AddCategoryPopUp = (props) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [catName, setCatName] = useState(null);
+  return (
+    <View style={modalStyles.centeredView}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={modalStyles.centeredView}>
+          <View style={modalStyles.modalView}>
+            <View style={modalStyles.modalHeading}>
+              <Text style={modalStyles.modalText}>New Category</Text>
+            </View>
+
+            <Kohana
+                style={{ 
+                  backgroundColor: '#f9f5ed', 
+                  position: 'absolute', 
+                  width: '25%',
+                  top: Dimensions.get('screen').height/8,
+                  borderRadius: 15
+                }}
+                label={'Enter:'}
+                iconClass={Ionicons}
+                iconName={'pencil'}
+                iconColor={'#f4d29a'}
+                inputPadding={16}
+                labelStyle={{ color: '#BEB38B' }}
+                inputStyle={{ color: '#BEB38B' }}
+                labelContainerStyle={{ padding: 2 }}
+                iconContainerStyle={{ padding: 16 }}
+                useNativeDriver
+                onChangeText={(text) => setCatName(text)}
+              />
+
+            <Pressable
+              style={[modalStyles.button, modalStyles.buttonClose]}
+              onPress={() => {
+                // Add the adjustment to firebase:
+                if (catName !== null) {
+                  addCategory(catName);
+                  // Rerender screen:
+                  props.updateScreen();
+                } else {
+                  alert('Something went wrong!')
+                }
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <Text style={modalStyles.textStyle}>Add</Text>
+            </Pressable>
+
+            <Ionicons style={modalStyles.cancelButton} name='close' size={40} onPress={() => {
+              setModalVisible(!modalVisible);
+            }} /> 
+          </View>
+        </View>
+      </Modal>
+      <Pressable
+        style={modalStyles.addCatButton}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={modalStyles.addCatText}>+ Category</Text>
+      </Pressable>
+    </View>
+  );
+};
