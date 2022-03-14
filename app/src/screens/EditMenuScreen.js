@@ -1,32 +1,41 @@
 import React, {useState, useEffect} from "react";
-import { View, StyleSheet, ScrollView, Dimensions, Button } from "react-native";
+import { View, StyleSheet, ScrollView, Dimensions, Button, Text, TouchableOpacity } from "react-native";
 import { 
   CategoryDisplayUnselected, 
   CategoryDisplaySelected,
   } from "../menu_edit_components/EditMenuComponents";
+  
 import { editMenuStyles } from "../styles/EditMenuStyleSheet";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ItemDisplay from '../menu_edit_components/ItemDisplay';
 
 import { getCategoryData } from '../database/menu-data-utility';
-import global from "../global_information/global";
+import global from '../global_information/global';
+
+import { AddItemPopUp, AddCategoryPopUp } from '../menu_edit_components/EditMenuPopUps'
 
 // Global state for the category that is currently selected:
 let currentCategory = null;
 
 function EditMenuScreen({ route, navigation }) {
-  // Copy the category data into a new variable:
-  const localCatData = JSON.parse(JSON.stringify(global.categories));
-
   // State for category buttons
   const [categoryButtons, setCategoryButtons] = useState(null);
 
   // Set items:
   const [items, setItems] = useState();
 
+  const selectNewCategory = (newCat) => {
+    // Set new category:
+    currentCategory = newCat;
+    renderCategoryButtons();
+    renderItems();
+  }
+
   // Rendering category buttons on the screen
   const renderCategoryButtons = () => {
-    setCategoryButtons(Object.keys(localCatData).map(name => {
+    // Retrieve the categories in the menu:
+    const catIdList = Object.keys(global.menu_info[global.focusedMenu]['categories']);
+    setCategoryButtons(catIdList.map(name => {
       if (currentCategory === name) {
         return <CategoryDisplaySelected key={name} categoryName={name} selectCategory={selectNewCategory} />;
       } else {
@@ -41,15 +50,8 @@ function EditMenuScreen({ route, navigation }) {
       //console.log(global.items)
       const itemIdList = Object.keys(global.categories[currentCategory]['items']);
       // Using id of item to construct components:
-      setItems(itemIdList.map(name => <ItemDisplay key={name} itemId={name} />))
+      setItems(itemIdList.map(name => <ItemDisplay key={name} itemId={name} catId={currentCategory} updateScreen={renderItems}/>))
     }
-  }
-
-  const selectNewCategory = (newCat) => {
-    // Set new category:
-    currentCategory = newCat;
-    renderCategoryButtons();
-    renderItems();
   }
 
   useEffect(() => {
@@ -62,10 +64,13 @@ function EditMenuScreen({ route, navigation }) {
         name="arrow-back-circle-outline" 
         color={'#000000'}
         size={70} 
-        onPress={() => navigation.goBack()}
+        onPress={() => {
+          currentCategory = null;
+          navigation.goBack()
+        }}
         style={styles.backButton} 
       />
-      
+
       <View style={styles.categoryScrollView}>
         <ScrollView 
           style={styles.categoryScroll} 
@@ -73,6 +78,9 @@ function EditMenuScreen({ route, navigation }) {
         >
           {categoryButtons}
         </ScrollView>
+        
+        <AddCategoryPopUp updateScreen={renderCategoryButtons} />
+      
       </View>
       <View style={styles.itemsScrollView}>
         <ScrollView style={styles.itemsScroll}>
@@ -86,7 +94,10 @@ function EditMenuScreen({ route, navigation }) {
         bottom: Platform.OS === 'ios' ? '16%' : '10%',
         right: '8.5%',
       }}>
-        <Ionicons name="add-circle-outline" size={70} onPress={() => console.log('HI')} />
+        <AddItemPopUp 
+          catId={currentCategory}
+          updateScreen={renderItems}
+        />
       </View>
     </View>
   );
@@ -106,7 +117,7 @@ const styles = StyleSheet.create({
   },
   categoryScrollView: {
     flex: 1,
-    height: (3 * Dimensions.get('screen').height)/4,
+    height: (0.635 * Dimensions.get('screen').height),
     marginTop: Dimensions.get('screen').height/9,
   },
   itemsScroll: {
@@ -114,7 +125,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get('screen').width/1.54,
     right: Dimensions.get('screen').width/4.5,
     borderRadius: 30,
-
   },
   itemsScrollView: {
     flex: 1,

@@ -2,12 +2,6 @@ import { collection, getDocs, doc, setDoc, updateDoc, arrayUnion, getDoc, arrayR
 import { db } from '../database/firebase-config';
 import global from '../global_information/global';
 
-export const addData = async () => {
-    const city = 'hello this is new';
-    await setDoc(doc(db, 'cities', 'random'), {
-        city_name: city,
-    })
-}
 // ======================================================================================
 // User creation functions:
 export const addUser = async (email) => {
@@ -15,19 +9,6 @@ export const addUser = async (email) => {
     await setDoc(doc(db, email, 'categories'), {})
     await setDoc(doc(db, email, 'adjustments'), {})
     await setDoc(doc(db, email, 'items'), {})
-}
-
-
-// ======================================================================================
-// Functions relation to getting information from the menu:
-export const getMenuListFromFirebase = async () => {
-    // const menuRef = doc(db, global.session_user, 'user_info');
-    // const docSnap = await getDoc(menuRef);
-    // console.log(docSnap.data())
-    // global.menu_list = docSnap.data()['menu_list'];
-    const menuRef = doc(db, global.menu_list, 'user_info');
-    const docSnap = await getDoc(menuRef);
-    return docSnap.data()['menu_list'];
 }
 
 export const setGlobalUserData = async () => {
@@ -97,12 +78,111 @@ export const addMenu = (menuName) => {
     return menuId;
 }
 
-// Adding menu category to a menu:
-export const addCategory = async(menuName, categoryName) => {
-    await setDoc(doc(db, global.session_user, 'menus', menuName, categoryName), {});
+/**
+ * Adds an item to the menu
+ * @param {*} catId 
+ * @param {*} newItemObj 
+ */
+export const addItem = (catId, newItemObj) => {
+    // New id for item:
+    const newId = 'item_' + Date.now();
+
+    // Add the new item to firebase (items):
+    const itemObj = {};
+    itemObj[newId] = newItemObj;
+    (async () => {
+        await updateDoc(doc(db, global.session_user, 'items'), itemObj);
+    })();
+
+    // Add corresponding to global
+    global.items[newId] = newItemObj;
+
+    // Add the item to category:
+    const catObj = {};
+    catObj[catId + '.items.' + newId] = true;
+    (async () => {
+        await updateDoc(doc(db, global.session_user, 'categories'), catObj);
+    })();
+
+    // Add corresponding to global
+    global.categories[catId]['items'][newId] = true;
 }
 
+export const editItem = (itemId, newName, newPrice) => {
+    // Update the new price and name in firebase:
+    (async () => {
+        // Better way to update data:
+        await updateDoc(doc(db, global.session_user, 'items'), {
+            [itemId + '.name']: String(newName),
+            [itemId + '.base_price']: Number(newPrice),
+        });
+    })();
 
+    // Update global:
+    global.items[itemId]['name'] = newName;
+    global.items[itemId]['base_price'] = newPrice;
+}
+
+/**
+ * Remove the item from the menu
+ * @param {*} itemId 
+ * @param {*} catId 
+ */
+export const removeItem = (itemId, catId) => {
+    // Remove the item from the item list:
+    (async () => {
+        // Delete the item from the item list:
+        await updateDoc(doc(db, global.session_user, 'items'), {
+            [itemId]: deleteField()
+        });
+    })();
+
+    // Remove from the category:
+    (async () => {
+        // Delete the item from the item list:
+        await updateDoc(doc(db, global.session_user, 'categories'), {
+            [catId + '.items.' + itemId]: deleteField()
+        });
+    })();
+
+    // Update global:
+    delete global.items[itemId];
+    delete global.categories[catId]['items'][itemId];
+}
+
+/**
+ * Add a new category in a menu:
+ * @param {*} catName 
+ */
+export const addCategory = (catName) => {
+    // New id for category:
+    const newId = 'category_' + Date.now();
+    // Add the new category into firebase in menu info:
+    (async () => {
+        await updateDoc(doc(db, global.session_user, 'menu_info'), {
+            [global.focusedMenu + '.categories.' + newId]: true
+        });
+    })();
+
+    // Add the new category to the category list:
+    (async () => {
+        await updateDoc(doc(db, global.session_user, 'categories'), {
+            [newId]: {
+                name: catName,
+                pos: 0, // set zero for now
+                items: {},
+            }
+        });
+    })();
+
+    // Update global:
+    global.menu_info[global.focusedMenu]['categories'][newId] = true;
+    global.categories[newId] = {
+        name: catName,
+        pos: 0, // set zero for now
+        items: {},
+    };
+}
 // ======================================================================================
 
 

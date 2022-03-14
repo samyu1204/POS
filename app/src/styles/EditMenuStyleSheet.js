@@ -33,19 +33,16 @@ export const editMenuStyles = StyleSheet.create({
     borderRadius: 20,
   },
   itemNameText: {
-    height: Dimensions.get('screen').height/20,
     alignSelf: 'flex-start',
     fontSize: 30,
-    top: '0.5%',
-    left: '80%',
     fontWeight: 'bold',
+    left: Dimensions.get('screen').width/20,
   },
   itemBasePriceText: {
     position: 'absolute',
-    alignSelf: 'center',
-    right: '5%',
     fontSize: 30,
     fontWeight: 'bold',
+    left: Platform.OS === 'ios' ? Dimensions.get('screen').width/3.3 : Dimensions.get('screen').width/3,
   },
   addAdjustmentButton: {
     backgroundColor: '#C8E6C9',
@@ -208,5 +205,23 @@ export const modalStyles = StyleSheet.create({
     borderRadius: 10,
     position: 'absolute',
     bottom: '28%'
+  },
+  addCatButton: {
+    backgroundColor: '#E4F4E4',
+    width: Dimensions.get('screen').width/6,
+    left: Dimensions.get('screen').width/14,
+    borderRadius: 30,
+    marginTop: 0.01 * Dimensions.get('screen').height,
+    height: 0.093 * Dimensions.get('screen').height,
+    top: 0.0125 * Dimensions.get('screen').height,
+    position: 'absolute'
+  },
+  addCatText: {
+    fontWeight: 'bold',
+    color: 'black',
+    fontSize: 30,
+    position: 'absolute',
+    alignSelf: 'center',
+    top: Dimensions.get('screen').height/40
   }
 })

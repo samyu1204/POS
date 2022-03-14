@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useLayoutEffect} from "react";
-import { View, Text, StyleSheet, Button, TouchableOpacity, ScrollView } from "react-native";
+import React, {useState, useLayoutEffect} from "react";
+import { View, Text, StyleSheet, Button, TouchableOpacity, Dimensions } from "react-native";
 import { editMenuStyles } from "../styles/EditMenuStyleSheet";
 import AdjustmentDisplay from "./AdjustmentDisplay";
-import { AddAdjustmentPopUp } from "./EditMenuPopUps";
-import { getItemData } from "../database/menu-data-utility";
+import { AddAdjustmentPopUp, EditItemPopUp } from "./EditMenuPopUps";
+
 import global from "../global_information/global";
 
 function ItemDisplay(props) {
@@ -31,16 +31,12 @@ function ItemDisplay(props) {
 
   return (
     <View style={styles.background}>
-      <View>
-        <TouchableOpacity 
-          style={editMenuStyles.item}
-          onPress={() => console.log('HELLO')}
-        >
-          <View style={{ flexDirection: 'row' }}>
-            <Text style={editMenuStyles.itemNameText}>{global.items[props.itemId]['name']}</Text>
-            <Text style={editMenuStyles.itemBasePriceText}>Base Price: ${global.items[props.itemId]['base_price']}</Text>
-          </View>
-        </TouchableOpacity>
+      <View style={styles.item}>
+        <EditItemPopUp 
+          itemId={props.itemId}
+          catId={props.catId}
+          updateScreen={props.updateScreen}
+        />
       </View>
 
       {/* Adjustments display: */}
@@ -63,8 +59,12 @@ function ItemDisplay(props) {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    marginBottom: '6%'
+    marginBottom: '6%',
   },
+  item: {
+    marginBottom: (Dimensions.get('screen').height) / 25,
+    marginTop: (Dimensions.get('screen').height) / 40,
+  }
 });
 
 export default ItemDisplay;

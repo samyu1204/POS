@@ -17,7 +17,7 @@ export const MenuBar = (props) => {
         <TouchableOpacity style={styles.editButton} onPress={() => {
           navigation.navigate("EditMenuScreen")
           // Set global focus menu:
-          global.focusedMenu = props.menuName;
+          global.focusedMenu = props.name;
         }}>
           <Ionicons name="pencil" size={22} />
         </TouchableOpacity>
@@ -53,6 +53,6 @@ const styles = StyleSheet.create({
   editButton: {
     position: 'absolute',
     left: '96%',
-    top: '30%'
+    top: '30%',
   }
 });
