@@ -113,11 +113,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#E4F4E4',
     width: Dimensions.get('screen').width/6,
     left: Dimensions.get('screen').width/14,
+    height: (0.440 * Dimensions.get('screen').height),
     borderRadius: 30,
   },
   categoryScrollView: {
     flex: 1,
-    height: (0.635 * Dimensions.get('screen').height),
     marginTop: Dimensions.get('screen').height/9,
   },
   itemsScroll: {
