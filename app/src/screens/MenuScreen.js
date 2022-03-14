@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {Animated, Button, Dimensions, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import global from '../global_information/global';
 import { getMenuList } from '../database/menu-data-utility';
 import { addMenu } from '../database/firebase-utility';
+import DoubleClick from 'react-native-double-tap';
+import { TapGestureHandler } from 'react-native-gesture-handler';
 
 function MenuScreen() {
     const ball = new Animated.ValueXY({x: 30, y: 30});
@@ -26,6 +28,21 @@ function MenuScreen() {
     return (
         <View style={styles.container}>
             <Button title='HELLO' onPress={() => console.log(global.items)} />
+            
+            <DoubleClick
+                singleTap={() => {
+                    console.log("single tap");
+                }}
+                doubleTap={() => {
+                    console.log("double tap");
+                }}
+                delay={200}
+                >
+                <Text>Open up App.js to start working on your app!</Text>
+                <Text>Changes you make will automatically reload.</Text>
+                <Text>Shake your phone to open the developer menu.</Text>
+            </DoubleClick>
+
             <Animated.View style={[styles.ball, ball.getLayout()]}>
                 <Text style={styles.text}>+</Text>
                 <Text style={styles.text}>HELLO</Text>
@@ -35,6 +52,9 @@ function MenuScreen() {
         </View>
     );
 }
+
+
+
 
 const styles = StyleSheet.create({
     container: {

@@ -23,7 +23,7 @@ export const editMenuStyles = StyleSheet.create({
     fontSize: 30,
     alignSelf: 'center',
     fontWeight: 'bold',
-    top: (Dimensions.get('screen').height) / 14,
+    top: (Dimensions.get('screen').height) / 17,
   },
   item: {
     backgroundColor: 'white',
@@ -223,5 +223,14 @@ export const modalStyles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     top: Dimensions.get('screen').height/40
-  }
+  },
+  editCategoryApplyButton: {
+    backgroundColor: '#EFDD49',
+    width: '70%',
+    alignSelf: 'center',
+    paddingVertical: '1%',
+    borderRadius: 10,
+    position: 'absolute',
+    bottom: '28%'
+  },
 })
