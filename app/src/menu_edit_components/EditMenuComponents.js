@@ -14,6 +14,7 @@ import { Triangle } from "../styles/Shapes";
 import DoubleClick from "react-native-double-tap";
 import { Kohana } from "react-native-textinput-effects";
 import { Ionicons } from '@expo/vector-icons';
+import { editCategory } from "../database/firebase-utility";
 
 
 // =============================================================================================================================
@@ -81,14 +82,14 @@ export function CategoryDisplaySelected(props) {
  * @param {*} props 
  * @returns 
  */
-export const EditCategoryPopUp = ({ props, refFunc, catRefFunc }) => {
+export const EditCategoryPopUp = ({ props, refFunc, catRefFunc, updateScreen }) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [catId, setCatId] = useState(null)
   const [name, setName] = useState();
 
   const categoryName = () => {
     if (catId !== null) {
-      return global.categories[catId]['name'];
+      setName(global.categories[catId]['name']);
     }
     return;
   }
@@ -135,14 +136,20 @@ export const EditCategoryPopUp = ({ props, refFunc, catRefFunc }) => {
                 iconContainerStyle={{ padding: 16 }}
                 useNativeDriver
                 onChangeText={(text) => setName(text)}
-                value={categoryName()}
+                value={name}
               />
 
             {/* Edit adjustment field name */}
             <Pressable
               style={[modalStyles.editCategoryApplyButton]}
               onPress={() => {
-                console.log('HELLO');
+                if (name !== null && name !== '') {
+                  editCategory(catId, name);
+                  // Rerender screen:
+                  updateScreen();
+                } else {
+                  alert('Something went wrong!');
+                }
                 setModalVisible(!modalVisible);
               }}
             >
