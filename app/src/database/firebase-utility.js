@@ -183,6 +183,23 @@ export const addCategory = (catName) => {
         items: {},
     };
 }
+
+/**
+ * Edits the category name
+ * @param {*} catId 
+ */
+export const editCategory = (catId, newCatName) => {
+    // Edit category name in firebase:
+    (async () => {
+        await updateDoc(doc(db, global.session_user, 'categories'), {
+            [catId + '.name']: newCatName,
+        });
+    })();
+
+    // Update in global:
+    global.categories[catId]['name'] = newCatName;
+}
+
 // ======================================================================================
 
 

@@ -106,7 +106,7 @@ function EditMenuScreen({ route, navigation }) {
         </ScrollView>
 
         <AddCategoryPopUp updateScreen={renderCategoryButtons} />
-        <EditCategoryPopUp catRefFunc={setTmpId} refFunc ={setModalVisibility} />
+        <EditCategoryPopUp catRefFunc={setTmpId} refFunc ={setModalVisibility} updateScreen={renderCategoryButtons} />
       </View>
       
       <View style={styles.itemsScrollView}>
