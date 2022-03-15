@@ -30,11 +30,29 @@ function EditMenuScreen({ route, navigation }) {
   // Set items:
   const [items, setItems] = useState();
 
+  // Showing the add button
+  const [addItemButton, setAddItemButton] = useState();
+
+  const renderAddItemButton = (render) => {
+    if (render === true) {
+      setAddItemButton(
+        <AddItemPopUp 
+          catId={currentCategory}
+          updateScreen={renderItems}
+          selectedCat={currentCategory}
+        />
+      );
+    } else {
+      setAddItemButton(null);
+    }
+  }
+
   const selectNewCategory = (newCat) => {
     // Set new category:
     currentCategory = newCat;
     renderCategoryButtons();
     renderItems();
+    renderAddItemButton(true);
   }
 
   // Rendering category buttons on the screen
@@ -109,6 +127,7 @@ function EditMenuScreen({ route, navigation }) {
           refFunc ={setModalVisibility} 
           updateCatButtons={renderCategoryButtons} 
           updateItemDisplay={setItems}
+          updateAddItemButton={renderAddItemButton}
           />
       </View>
       
@@ -124,10 +143,7 @@ function EditMenuScreen({ route, navigation }) {
         bottom: Platform.OS === 'ios' ? '16%' : '10%',
         right: '8.5%',
       }}>
-        <AddItemPopUp 
-          catId={currentCategory}
-          updateScreen={renderItems}
-        />
+        {addItemButton}
       </View>
     </View>
   );

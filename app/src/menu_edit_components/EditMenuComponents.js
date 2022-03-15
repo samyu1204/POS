@@ -82,7 +82,7 @@ export function CategoryDisplaySelected(props) {
  * @param {*} props 
  * @returns 
  */
-export const EditCategoryPopUp = ({ refFunc, catRefFunc, updateCatButtons, updateItemDisplay }) => {
+export const EditCategoryPopUp = ({ refFunc, catRefFunc, updateCatButtons, updateItemDisplay, updateAddItemButton }) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [catId, setCatId] = useState(null)
   const [name, setName] = useState();
@@ -175,7 +175,10 @@ export const EditCategoryPopUp = ({ refFunc, catRefFunc, updateCatButtons, updat
                   setModalVisible(!modalVisible);
                   // Update the screen:
                   updateCatButtons();
+                  // Set to no item displayed
                   updateItemDisplay(null);
+                  // Update the adding button:
+                  updateAddItemButton(false);
                 }}
                 />
             </View>
