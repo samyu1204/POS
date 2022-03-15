@@ -69,7 +69,6 @@ const AddItemPopUp = (props) => {
         tmp[key] = value;
       }
     }
-    // console.log(basePrice)
     if (value !== null && itemName !== null && basePrice !== null) {
       addMenuItem(props.menuName, value, itemName, basePrice, tmp);
       setModalVisible(false);
