@@ -200,6 +200,26 @@ export const editCategory = (catId, newCatName) => {
     global.categories[catId]['name'] = newCatName;
 }
 
+export const removeCategory = (catId) => {
+    // Remove category in firebase:
+    (async () => {
+        await updateDoc(doc(db, global.session_user, 'categories'), {
+            [catId]: deleteField(),
+        });
+    })();
+
+    // remove the categoryId field in menu:
+    (async () => {
+        await updateDoc(doc(db, global.session_user, 'menu_info'), {
+            [global.focusedMenu + '.categories.' + catId]: deleteField(),
+        });
+    })();
+
+    // Update global:
+    delete global.categories[catId];
+    delete global.menu_info[global.focusedMenu]['categories'][catId];
+}
+
 // ======================================================================================
 
 

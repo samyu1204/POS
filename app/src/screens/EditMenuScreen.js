@@ -65,7 +65,6 @@ function EditMenuScreen({ route, navigation }) {
   // Rendering item displays:
   const renderItems = () => {
     if (currentCategory != null) {
-      //console.log(global.items)
       const itemIdList = Object.keys(global.categories[currentCategory]['items']);
       // Using id of item to construct components:
       setItems(itemIdList.map(name => 
@@ -96,7 +95,6 @@ function EditMenuScreen({ route, navigation }) {
         }}
         style={styles.backButton} 
       />
-
       <View style={styles.categoryScrollView}>
         <ScrollView 
           style={styles.categoryScroll} 
@@ -106,7 +104,12 @@ function EditMenuScreen({ route, navigation }) {
         </ScrollView>
 
         <AddCategoryPopUp updateScreen={renderCategoryButtons} />
-        <EditCategoryPopUp catRefFunc={setTmpId} refFunc ={setModalVisibility} updateScreen={renderCategoryButtons} />
+        <EditCategoryPopUp 
+          catRefFunc={setTmpId} 
+          refFunc ={setModalVisibility} 
+          updateCatButtons={renderCategoryButtons} 
+          updateItemDisplay={setItems}
+          />
       </View>
       
       <View style={styles.itemsScrollView}>
