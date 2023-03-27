@@ -1,0 +1,82 @@
+
+# GDP Projection:
+gdp <- demodata[c(34,35),]
+colnames(gdp) <- demodata[6,]
+
+gdp$'Region 1'<- as.numeric(gdp$'Region 1')
+gdp$'Region 2'<- as.numeric(gdp$'Region 2')
+gdp$'Region 3'<- as.numeric(gdp$'Region 3')
+gdp$'Region 4'<- as.numeric(gdp$'Region 4')
+gdp$'Region 5'<- as.numeric(gdp$'Region 5')
+gdp$'Region 6'<- as.numeric(gdp$'Region 6')
+
+#gdp growth rate:
+gdp_growth <- c(0,0,0,0,0,0)
+for (i in (1:6)){
+  gdp_growth[i] <- as.numeric(gdp[1,i+1])/as.numeric(gdp[2,i+1])
+}
+
+#gdp projections:
+gdp_table <- data.frame()
+
+for (i in (1:6)){
+  gdp_table[1, i] <- gdp[1,i+1]
+  for(j in (2:11)){
+    gdp_table[j, i] <- gdp_table[j-1, i]*gdp_growth[i]
+    
+  }
+}
+
+
+#Voluntary Relocation costs:
+options(scipen=999)
+
+#Population figures for each region:
+Population <- c(6406008, 4386948, 5019684, 995544, 1257096, 313836)
+
+#Taking the Markov chain made in excel:
+transition1 <- matrix(c(0.65, 0.05, 0.15, 0.05, 0.05, 0.05, 0.2, 0.5, 0.1, 0.05, 0.05, 0.1, 0.2, 0.05, 0.5, 0.05, 0.05, 0.15, 0.1, 0.025, 0.2, 0.5, 0.025, 0.15, 0.1, 0.025, 0.2, 0.2, 0.35, 0.125, 0.1, 0.025, 0.175, 0.175, 0.025, 0.5),
+                     nrow = 6,
+                     byrow = TRUE)
+
+pop <- matrix(0, nrow = 11, ncol = 6)
+pop[1, ] <- Population
+#empty data frame to store calculations in loop
+df <- matrix(0, nrow = 6, ncol = 6)
+
+
+for (j in (2:11)){
+  
+  for (k in (1:6)){
+    pop[j, ] <- colSums(df)
+   
+     for (i in (1:6)){
+     df[i, ] <- pop[j-1, i]*transition1[i, ]
+     }
+  }
+}
+
+
+#involuntary Relocation costs:
+
+#Taking the Markov chain made in excel:
+transition2 <- matrix(c(0.75, 0, 0.05, 0.1, 0, 0.1, 0.2, 0.05, 0.1, 0.3, 0.05, 0.3, 0.2, 0.05, 0.1, 0.2, 0.05, 0.4, 0.1, 0, 0, 0.4, 0, 0.5, 0.1, 0, 0.05, 0.3, 0.05, 0.5, 0.1, 0, 0, 0.2, 0, 0.7),
+                      nrow = 6,
+                      byrow = TRUE)
+
+pop1 <- matrix(0, nrow = 11, ncol = 6)
+pop1[1, ] <- Population
+#empty data frame to store calculations in loop
+df1 <- matrix(0, nrow = 6, ncol = 6)
+
+
+for (j in (2:11)){
+  
+  for (k in (1:6)){
+    pop1[j, ] <- colSums(df1)
+    
+    for (i in (1:6)){
+      df1[i, ] <- pop1[j-1, i]*transition2[i, ]
+    }
+  }
+}
